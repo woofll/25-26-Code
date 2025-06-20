@@ -8,8 +8,8 @@
 // Chassis constructor
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
-    {-11, -12},     // Left Chassis Ports (negative port will reverse it!)
-    {19, 20},  // Right Chassis Ports (negative port will reverse it!)
+    {-18, -20},     // Left Chassis Ports (negative port will reverse it!)
+    {17, 19},  // Right Chassis Ports (negative port will reverse it!)
 
     7,      // IMU Port
     4.125,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
@@ -247,8 +247,8 @@ void opcontrol() {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
 
-    chassis.opcontrol_tank();  // Tank control
-    // chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
+    // chassis.opcontrol_tank();  // Tank control
+    chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
     // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
@@ -257,6 +257,19 @@ void opcontrol() {
     // Put more user control code here!
     // . . .
 
+
+// Intake Control
+    if (master.get_digital_new_press(DIGITAL_L1)) { // L1 is pressed = Intake in
+      global::leftIntake.move_velocity(-200);
+      global::rightIntake.move_velocity(200);
+    } else if (master.get_digital_new_press(DIGITAL_L2)) { // L2 is pressed = Intake out
+      global::leftIntake.move_velocity(200);
+      global::rightIntake.move_velocity(-200);
+    } else if (master.get_digital_new_press(DIGITAL_R1)) { // R1 is pressed = Intake stop
+      global::leftIntake.move_velocity(0);
+      global::rightIntake.move_velocity(0);
+    }
+    
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
 }
