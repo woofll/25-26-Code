@@ -12,16 +12,16 @@ ez::Drive chassis(
     {17, 19},  // Right Chassis Ports (negative port will reverse it!)
 
     7,      // IMU Port
-    4.125,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
-    343);   // Wheel RPM = cartridge * (motor gear / wheel gear)
+    3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
+    360);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
-// Uncomment the trackers you're using here!
+// Uncomment the trackers  you're using here!
 // - `8` and `9` are smart ports (making these negative will reverse the sensor)
 //  - you should get positive values on the encoders going FORWARD and RIGHT
 // - `2.75` is the wheel diameter
 // - `4.0` is the distance from the center of the wheel to the center of the robot
 // ez::tracking_wheel horiz_tracker(8, 2.75, 4.0);  // This tracking wheel is perpendicular to the drive wheels
-// ez::tracking_wheel vert_tracker(9, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
+// ez::tracking_wheel vert_track er(9, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -260,15 +260,15 @@ void opcontrol() {
 
 // Intake Control
     if (master.get_digital_new_press(DIGITAL_L1)) { // L1 is pressed = Intake in
-      global::leftIntake.move_velocity(-200);
-      global::rightIntake.move_velocity(200);
-    } else if (master.get_digital_new_press(DIGITAL_L2)) { // L2 is pressed = Intake out
       global::leftIntake.move_velocity(200);
       global::rightIntake.move_velocity(-200);
+    } else if (master.get_digital_new_press(DIGITAL_L2)) { // L2 is pressed = Intake out
+      global::leftIntake.move_velocity(-200);
+      global::rightIntake.move_velocity(200);
     } else if (master.get_digital_new_press(DIGITAL_R1)) { // R1 is pressed = Intake stop
       global::leftIntake.move_velocity(0);
       global::rightIntake.move_velocity(0);
-    }
+    } 
     
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
