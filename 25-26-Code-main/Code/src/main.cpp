@@ -8,8 +8,8 @@
 // Chassis constructor
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
-    {-18, -20},     // Left Chassis Ports (negative port will reverse it!)
-    {17, 19},  // Right Chassis Ports (negative port will reverse it!)
+    {-11, -12},     // Left Chassis Ports (negative port will reverse it!)
+    {19, 20},  // Right Chassis Ports (negative port will reverse it!)
 
     7,      // IMU Port
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
@@ -173,6 +173,7 @@ void ez_screen_task() {
           screen_print_tracker(chassis.odom_tracker_right, "r", 5);
           screen_print_tracker(chassis.odom_tracker_back, "b", 6);
           screen_print_tracker(chassis.odom_tracker_front, "f", 7);
+          // chassis.pid_wait c
         }
       }
     }
@@ -269,6 +270,8 @@ void opcontrol() {
       global::leftIntake.move_velocity(0);
       global::rightIntake.move_velocity(0);
     } 
+
+
     
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
