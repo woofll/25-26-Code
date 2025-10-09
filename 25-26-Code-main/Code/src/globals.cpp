@@ -4,7 +4,9 @@ namespace global{
 //pros::sensorType sensorName (portNumber);
 //pros::adi::Pneumatics pneumaticsName('portLetter', state(true/false));
 
-pros::Motor leftIntake(2, pros::v5::MotorGearset::rpm_200);
+pros::Motor leftIntake(3, pros::v5::MotorGearset::rpm_200);
 pros::Motor rightIntake(9, pros::v5::MotorGearset::rpm_200);
+pros::Motor firstScore(1, pros::v5::MotorGearset::rpm_200);
+pros::Motor secondScore(2, pros::v5::MotorGearset::rpm_200); 
 
 }

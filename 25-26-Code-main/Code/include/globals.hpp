@@ -8,4 +8,6 @@ namespace global{
 
 extern pros::Motor leftIntake;
 extern pros::Motor rightIntake;
+extern pros::Motor firstScore;
+extern pros::Motor secondScore;
 }

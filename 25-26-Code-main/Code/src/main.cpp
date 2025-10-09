@@ -271,11 +271,27 @@ void opcontrol() {
       global::rightIntake.move_velocity(0);
     } 
 
+// Scoring Control
+    if (master.get_digital_new_press(DIGITAL_UP)) { // UP is pressed = Scoring in 
+      global::firstScore.move_velocity(200);
+      global::secondScore.move_velocity(-200);
+    } else if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN is pressed = Scoring out
+      global::firstScore.move_velocity(-200);
+      global::secondScore.move_velocity(200);
+    } else if (master.get_digital_new_press(DIGITAL_LEFT)) { // LEFT is pressed = Scoring stop
+      global::firstScore.move_velocity(0);
+      global::secondScore.move_velocity(0);
+    }
 
-    
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
 }
 
 
-//1test
+//Potential button mappings
+// 
+
+//run this before pros m
+//    pros m --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"
+//    pros mu --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"
+//idk why but for now do it
