@@ -8,8 +8,8 @@
 // Chassis constructor
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
-    {-11, -12},     // Left Chassis Ports (negative port will reverse it!)
-    {19, 20},  // Right Chassis Ports (negative port will reverse it!)
+    {-1, -10},     // Left Chassis Ports (negative port will reverse it!)
+    {16, 18},  // Right Chassis Ports (negative port will reverse it!)
 
     7,      // IMU Port
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
@@ -259,29 +259,37 @@ void opcontrol() {
     // . . .
 
 
-// Intake Control
-    if (master.get_digital_new_press(DIGITAL_L1)) { // L1 is pressed = Intake in
-      global::leftIntake.move_velocity(200);
-      global::rightIntake.move_velocity(-200);
-    } else if (master.get_digital_new_press(DIGITAL_L2)) { // L2 is pressed = Intake out
-      global::leftIntake.move_velocity(-200);
-      global::rightIntake.move_velocity(200);
-    } else if (master.get_digital_new_press(DIGITAL_R1)) { // R1 is pressed = Intake stop
-      global::leftIntake.move_velocity(0);
-      global::rightIntake.move_velocity(0);
-    } 
 
 // Scoring Control
     if (master.get_digital_new_press(DIGITAL_UP)) { // UP is pressed = Scoring in 
-      global::firstScore.move_velocity(200);
-      global::secondScore.move_velocity(-200);
+      global::intake.move_velocity(200);
+      global::score.move_velocity(-200);
     } else if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN is pressed = Scoring out
-      global::firstScore.move_velocity(-200);
-      global::secondScore.move_velocity(200);
+      global::intake.move_velocity(-200);
+      global::score.move_velocity(200);
     } else if (master.get_digital_new_press(DIGITAL_LEFT)) { // LEFT is pressed = Scoring stop
-      global::firstScore.move_velocity(0);
-      global::secondScore.move_velocity(0);
+      global::intake.brake();
+      global::score.brake();
     }
+
+    if (master.get_digital_new_press(DIGITAL_R1)) { //X is pressed = Top Goal
+      global::topFlex.move_velocity(200);
+    } else if (master.get_digital_new_press(DIGITAL_R2)){ //B is pressed = Middle Goal
+      global::topFlex.move_velocity(-200);
+    } else if (master.get_digital_new_press(DIGITAL_R1) && master.get_digital_new_press(DIGITAL_R2)){ //A is pressed = Stop Flex Wheel
+      global::topFlex.brake();
+    }
+
+    if (master.get_digital(DIGITAL_Y)) { //Hold down Y = Intake reverses slowly for parking
+      global::intake.move_velocity(-20);
+    }
+
+  // // Plate Control (Like the thing for when tower and boom balls get out)
+  //   if (master.get_digital_new_press(DIGITAL_R1)) { // R1 is pressed = Extend
+  //     global::plate.extend();
+  //   } else if (master.get_digital_new_press(DIGITAL_R2)) { // R2 is pressed = Retract
+  //     global::plate.retract();
+  //   }
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }

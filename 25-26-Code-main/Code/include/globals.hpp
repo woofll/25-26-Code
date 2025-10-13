@@ -5,9 +5,9 @@ namespace global{
 //extern pros::sensorType sensorName;
 //extern pros::adi::Pneumatics pneumaticsName;
 
+extern pros::Motor intake;
+extern pros::Motor score;
+extern pros::Motor topFlex;
 
-extern pros::Motor leftIntake;
-extern pros::Motor rightIntake;
-extern pros::Motor firstScore;
-extern pros::Motor secondScore;
+extern pros::adi::Pneumatics plate;
 }
