@@ -4,8 +4,8 @@
       "name": "PROS Project",
       "includePath": [
         "${workspaceFolder}/**",
-        "c:\\Users\\jaych\\Downloads\\25-26 Code!\\include",
-        "c:\\Users\\jaych\\Desktop\\25-26 Code!\\include"
+        "C:\\Users\\jaych\\Desktop\\25-26 Code!\\25-26-Code-main\\Code",
+        "C:\\Users\\jaych\\Desktop\\25-26 Code!\\25-26-Code-main\\Code"
       ],
       "defines": [
         "_DEBUG",
