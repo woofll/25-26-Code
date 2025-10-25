@@ -16,10 +16,6 @@ ez::Drive chassis(
     360);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
 // Uncomment the trackers  you're using here!
-// - `8` and `9` are smart ports (making these negative will reverse the sensor)
-//  - you should get positive values on the encoders going FORWARD and RIGHT
-// - `2.75` is the wheel diameter
-// - `4.0` is the distance from the center of the wheel to the center of the robot
 // ez::tracking_wheel horiz_tracker(8, 2.75, 4.0);  // This tracking wheel is perpendicular to the drive wheels
 // ez::tracking_wheel vert_track er(9, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
 
@@ -58,20 +54,7 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      {"Drive\n\nDrive forward and come back", drive_example},
-      {"Turn\n\nTurn 3 times.", turn_example},
-      {"Drive and Turn\n\nDrive forward, turn, come back", drive_and_turn},
-      {"Drive and Turn\n\nSlow down during drive", wait_until_change_speed},
-      {"Swing Turn\n\nSwing in an 'S' curve", swing_example},
-      {"Motion Chaining\n\nDrive forward, turn, and come back, but blend everything together :D", motion_chaining},
-      {"Combine all 3 movements", combining_movements},
-      {"Interference\n\nAfter driving forward, robot performs differently if interfered or not", interfered_example},
-      {"Simple Odom\n\nThis is the same as the drive example, but it uses odom instead!", odom_drive_example},
-      {"Pure Pursuit\n\nGo to (0, 30) and pass through (6, 10) on the way.  Come back to (0, 0)", odom_pure_pursuit_example},
-      {"Pure Pursuit Wait Until\n\nGo to (24, 24) but start running an intake once the robot passes (12, 24)", odom_pure_pursuit_wait_until_example},
-      {"Boomerang\n\nGo to (0, 24, 45) then come back to (0, 0, 0)", odom_boomerang_example},
-      {"Boomerang Pure Pursuit\n\nGo to (0, 24, 45) on the way to (24, 24) then come back to (0, 0, 0)", odom_boomerang_injected_pure_pursuit_example},
-      {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", measure_offsets},
+      {"Drive\n\nDrive forward and come back", drive_pid},
   });
 
   // Initialize chassis and auton selector
@@ -244,6 +227,12 @@ void opcontrol() {
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
 
+  // variable start
+  bool tongue = false; //Tongue is up
+
+  // variable end
+
+
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
@@ -258,38 +247,58 @@ void opcontrol() {
     // Put more user control code here!
     // . . .
 
-
-
 // Scoring Control
     if (master.get_digital_new_press(DIGITAL_UP)) { // UP is pressed = Scoring in 
       global::intake.move_velocity(200);
-      global::score.move_velocity(-200);
+      global::score.move_velocity(-200); 
     } else if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN is pressed = Scoring out
       global::intake.move_velocity(-200);
-      global::score.move_velocity(200);
+      global::score.move_velocity(200); 
     } else if (master.get_digital_new_press(DIGITAL_LEFT)) { // LEFT is pressed = Scoring stop
       global::intake.brake();
       global::score.brake();
     }
 
-    if (master.get_digital_new_press(DIGITAL_R1)) { //X is pressed = Top Goal
-      global::topFlex.move_velocity(200);
-    } else if (master.get_digital_new_press(DIGITAL_R2)){ //B is pressed = Middle Goal
-      global::topFlex.move_velocity(-200);
-    } else if (master.get_digital_new_press(DIGITAL_R1) && master.get_digital_new_press(DIGITAL_R2)){ //A is pressed = Stop Flex Wheel
-      global::topFlex.brake();
-    }
-
+// Slow Reverse Intake for Parking
     if (master.get_digital(DIGITAL_Y)) { //Hold down Y = Intake reverses slowly for parking
       global::intake.move_velocity(-20);
     }
 
-  // // Plate Control (Like the thing for when tower and boom balls get out)
-  //   if (master.get_digital_new_press(DIGITAL_R1)) { // R1 is pressed = Extend
-  //     global::plate.extend();
-  //   } else if (master.get_digital_new_press(DIGITAL_R2)) { // R2 is pressed = Retract
-  //     global::plate.retract();
-  //   }
+// Top Flex Wheel Control
+    // if (master.get_digital(DIGITAL_R1)) { //R1 is held = Top Goal
+    //   global::topFlex.move_velocity(200);
+    // } else if (master.get_digital(DIGITAL_R2)){ //R2 is held = Middle Goal
+    //   global::topFlex.move_velocity(-200);
+    // } else if (!master.get_digital(DIGITAL_R1) && !master.get_digital(DIGITAL_R2)){ //Flex not moving = Vibrate
+    //   global::topFlex.brake();
+    // } 
+
+    if (master.get_digital(DIGITAL_R1)) { //R1 is held = Top Goal
+      global::topFlex.move_velocity(200);
+    } else if (master.get_digital(DIGITAL_R2)){ //R2 is held = Middle Goal
+      global::topFlex.move_velocity(-200);
+    } else if (!master.get_digital(DIGITAL_R1) && !master.get_digital(DIGITAL_R2)){ //None pressed = stop
+      global::topFlex.brake();
+    } 
+
+  // Tongue Control (Like the thing for when tower and boom balls get out)
+    if (master.get_digital_new_press(DIGITAL_L1) && !tongue) {
+      global::tongue.retract(); //Go down
+      tongue = true;
+    } else if (master.get_digital_new_press(DIGITAL_L1) && tongue) {
+      global::tongue.extend(); //Go up
+      tongue = false;
+    }
+
+    if (master.get_digital_new_press(DIGITAL_L2)) {
+      global::tongue.toggle();
+    }
+
+    // if (master.get_digital_new_press(DIGITAL_L1)) {
+    //   global::tongue.extend();
+    // } else if (master.get_digital_new_press(DIGITAL_L2)) {
+    //   global::tongue.retract();
+    // }
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }

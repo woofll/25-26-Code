@@ -11,7 +11,7 @@ const int TURN_SPEED = 90;
 const int SWING_SPEED = 110;
 
 ///
-// Constants
+// Constants (Use if PID)
 ///
 void default_constants() {
   // P, I, D, and Start I
@@ -51,7 +51,7 @@ void default_constants() {
 ///
 // Drive Example
 ///
-void drive_example() {
+void drive_pid() {
   // The first parameter is target inches
   // The second parameter is max speed the robot will drive at
   // The third parameter is a boolean (true or false) for enabling/disabling a slew at the start of drive motions
@@ -60,10 +60,7 @@ void drive_example() {
   chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
   chassis.pid_wait();
 
-  chassis.pid_drive_set(-12_in, DRIVE_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(-12_in, DRIVE_SPEED);
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED);
   chassis.pid_wait();
 }
 
@@ -198,43 +195,6 @@ void combining_movements() {
   chassis.pid_wait();
 }
 
-///
-// Interference example
-///
-void tug(int attempts) {
-  for (int i = 0; i < attempts - 1; i++) {
-    // Attempt to drive backward
-    printf("i - %i", i);
-    chassis.pid_drive_set(-12_in, 127);
-    chassis.pid_wait();
-
-    // If failsafed...
-    if (chassis.interfered) {
-      chassis.drive_sensor_reset();
-      chassis.pid_drive_set(-2_in, 20);
-      pros::delay(1000);
-    }
-    // If the robot successfully drove back, return
-    else {
-      return;
-    }
-  }
-}
-
-// If there is no interference, the robot will drive forward and turn 90 degrees.
-// If interfered, the robot will drive forward and then attempt to drive backward.
-void interfered_example() {
-  chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
-
-  if (chassis.interfered) {
-    tug(3);
-    return;
-  }
-
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
-  chassis.pid_wait();
-}
 
 ///
 // Odom Drive PID
@@ -283,34 +243,6 @@ void odom_pure_pursuit_wait_until_example() {
   // Intake.move(127);  // Set your intake to start moving once it passes through the second point in the index
   chassis.pid_wait();
   // Intake.move(0);  // Turn the intake off
-}
-
-///
-// Odom Boomerang
-///
-void odom_boomerang_example() {
-  chassis.pid_odom_set({{0_in, 24_in, 45_deg}, fwd, DRIVE_SPEED},
-                       true);
-  chassis.pid_wait();
-
-  chassis.pid_odom_set({{0_in, 0_in, 0_deg}, rev, DRIVE_SPEED},
-                       true);
-  chassis.pid_wait();
-}
-
-///
-// Odom Boomerang Injected Pure Pursuit
-///
-void odom_boomerang_injected_pure_pursuit_example() {
-  chassis.pid_odom_set({{{0_in, 24_in, 45_deg}, fwd, DRIVE_SPEED},
-                        {{12_in, 24_in}, fwd, DRIVE_SPEED},
-                        {{24_in, 24_in}, fwd, DRIVE_SPEED}},
-                       true);
-  chassis.pid_wait();
-
-  chassis.pid_odom_set({{0_in, 0_in, 0_deg}, rev, DRIVE_SPEED},
-                       true);
-  chassis.pid_wait();
 }
 
 ///
@@ -376,3 +308,41 @@ void measure_offsets() {
 // . . .
 // Make your own autonomous functions here!
 // . . .
+
+void redTop() {
+  //Facing North
+  
+  /*
+  Turn -30deg
+  Grab three center corner blocks
+  Turn xdeg to face goal (backward)
+  Drive to goal
+  Score for xsec (try to only score 1 or 2)
+
+  Go forward to direction of loader until perpendicular to wall
+  Turn to be perpedicular with fall
+  Extend plate
+  Drive forward 
+  Wait x seconds to grab 3-4 blocks
+  
+  Back up a bit
+  retract plate
+  back up until hit stand of tube
+  Dispense max sec
+  Back up for 6in
+
+  end facing north
+  */
+}
+
+void blueTop() {
+
+}
+
+void blueBottom() {
+
+}
+
+void redBottom() {
+
+}
