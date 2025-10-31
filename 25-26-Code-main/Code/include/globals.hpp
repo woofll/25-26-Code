@@ -9,5 +9,8 @@ extern pros::Motor intake;
 extern pros::Motor score;
 extern pros::Motor topFlex;
 
-extern pros::adi::Pneumatics plate;
+extern pros::adi::Pneumatics tongue;
+extern pros::adi::Pneumatics descore;
+extern pros::adi::Pneumatics gate;
+
 }
