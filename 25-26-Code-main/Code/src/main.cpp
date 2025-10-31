@@ -1,9 +1,11 @@
 #include "main.h"
 
+
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
 // https://ez-robotics.github.io/EZ-Template/
 /////
+
 
 // Chassis constructor
 ez::Drive chassis(
@@ -11,13 +13,16 @@ ez::Drive chassis(
     {-1, -10},     // Left Chassis Ports (negative port will reverse it!)
     {16, 18},  // Right Chassis Ports (negative port will reverse it!)
 
-    7,      // IMU Port
+
+    15,      // IMU Port
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     360);   // Wheel RPM = cartridge * (motor gear / wheel gear)
+
 
 // Uncomment the trackers  you're using here!
 // ez::tracking_wheel horiz_tracker(8, 2.75, 4.0);  // This tracking wheel is perpendicular to the drive wheels
 // ez::tracking_wheel vert_track er(9, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -29,7 +34,9 @@ void initialize() {
   // Print our branding over your terminal :D
   ez::ez_template_print();
 
+
   pros::delay(500);  // Stop the user from doing anything while legacy ports configure
+
 
   // Look at your horizontal tracking wheel and decide if it's in front of the midline of your robot or behind it
   //  - change `back` to `front` if the tracking wheel is in front of the midline
@@ -40,17 +47,21 @@ void initialize() {
   //  - ignore this if you aren't using a vertical tracker
   // chassis.odom_tracker_left_set(&vert_tracker);
 
+
   // Configure your chassis controls
   chassis.opcontrol_curve_buttons_toggle(true);   // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(0.0);   // Sets the active brake kP. We recommend ~2.  0 will disable.
   chassis.opcontrol_curve_default_set(0.0, 0.0);  // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
 
+
   // Set the drive to your own constants from autons.cpp!
   default_constants();
+
 
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
   // chassis.opcontrol_curve_buttons_left_set(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
+
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
@@ -60,13 +71,16 @@ void initialize() {
       Auton{"redLow!", redLow},
       Auton{"Drive\n\nDrive forward and come back", drive_pid},
 
+
   });
+
 
   // Initialize chassis and auton selector
   chassis.initialize();
   ez::as::initialize();
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
+
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -76,6 +90,7 @@ void initialize() {
 void disabled() {
   // . . .
 }
+
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -89,6 +104,7 @@ void disabled() {
 void competition_initialize() {
   // . . .
 }
+
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -110,6 +126,7 @@ void autonomous() {
   ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
 
+
 /**
  * Simplifies printing tracker values to the brain screen
  */
@@ -122,6 +139,7 @@ void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int lin
   }
   ez::screen_print(tracker_value + tracker_width, line);  // Print final tracker text
 }
+
 
 /**
  * Ez screen task
@@ -142,6 +160,7 @@ void ez_screen_task() {
                                "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
                            1);  // Don't override the top Page line
 
+
           // Display all trackers that are being used
           screen_print_tracker(chassis.odom_tracker_left, "l", 4);
           screen_print_tracker(chassis.odom_tracker_right, "r", 5);
@@ -152,16 +171,19 @@ void ez_screen_task() {
       }
     }
 
+
     // Remove all blank pages when connected to a comp switch
     else {
       if (ez::as::page_blank_amount() > 0)
         ez::as::page_blank_remove_all();
     }
 
+
     pros::delay(ez::util::DELAY_TIME);
   }
 }
 pros::Task ezScreenTask(ez_screen_task);
+
 
 /**
  * Gives you some extras to run in your opcontrol:
@@ -176,12 +198,14 @@ void ez_template_extras() {
     // PID Tuner
     // - after you find values that you're happy with, you'll have to set them in auton.cpp
 
+
     // Enable / Disable PID Tuner
     //  When enabled:
     //  * use A and Y to increment / decrement the constants
     //  * use the arrow keys to navigate the constants
     if (master.get_digital_new_press(DIGITAL_X))
       chassis.pid_tuner_toggle();
+
 
     // Trigger the selected autonomous routine
     if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) {
@@ -190,9 +214,11 @@ void ez_template_extras() {
       chassis.drive_brake_set(preference);
     }
 
+
     // Allow PID Tuner to iterate
     chassis.pid_tuner_iterate();
   }
+
 
   // Disable PID Tuner when connected to a comp switch
   else {
@@ -200,6 +226,7 @@ void ez_template_extras() {
       chassis.pid_tuner_disable();
   }
 }
+
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -218,27 +245,46 @@ void opcontrol() {
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
 
+
   // variable start
   bool tongue = true; //Tongue is up
   bool descore = false; //Descore is retracted
   bool intaked = false; //Intaking is active
   bool top, mid, low = false; //Scoring positions
- 
-  //Test variables
-  static bool ranAuton = false;
-  bool x = false;
-  bool inOut = false;
+
 
   // variable end
 
+
   if (master.get_digital_new_press(DIGITAL_B) && master.get_digital_new_press(DIGITAL_DOWN)) {
-    blueTop;
+    // Quick test: run the blueTop autonomous directly (only when not connected to competition)
+    if (!pros::competition::is_connected()) {
+      // Prepare sensors / chassis exactly like autonomous() does
+      chassis.pid_targets_reset();
+      chassis.drive_imu_reset();
+      chassis.drive_sensor_reset();
+      chassis.odom_xyt_set(0_in, 0_in, 0_deg);
+      chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
+      blueTop();
+      // Restore preferred opcontrol brake mode
+      chassis.drive_brake_set(MOTOR_BRAKE_COAST);
+    }
   }
+
+
 
 
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
+    if (!pros::competition::is_connected()){
+      if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)) {
+        autonomous();
+        blueTop();
+      }
+    }
+
+
 
     // chassis.opcontrol_tank();  // Tank control
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
@@ -246,97 +292,72 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
-    if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_A) && !ranAuton) {
-      autonomous();
-      ranAuton = true;
-    }
-
-    // if (master.get_digital_new_press(DIGITAL_R2)) { // UP is pressed = Scoring in 
-    //   bool intaked = true;
-    //   global::intake.move_velocity(200);
-    //   global::score.move_velocity(-200);
-    // } else if (master.get_digital_new_press(DIGITAL_L2)) { // DOWN is pressed = Scoring out
-    //   intaked = true;
-    //   global::intake.move_velocity(-200);
-    //   global::score.move_velocity(200);
-    // } else if (master.get_digital_new_press(DIGITAL_L1)) { // LEFT is pressed = Scoring stop
-    //   intaked = false;
-    //   global::intake.brake();
-    //   global::score.brake();
-    //   global::topFlex.brake();
-    // }
-
-    // if(master.get_digital(DIGITAL_X)) { //Hold X = Score Top 
-    //   intaked = true;
-    //   global::intake.move_velocity(200);
-    //   global::score.move_velocity(-200);
-    //   global::topFlex.move_velocity(-200);
-    //   //gate open
-    // } 
-
-    // if(master.get_digital(DIGITAL_Y)) { //Hold Y = Score Middle
-    //   intaked = true;
-    //   global::intake.move_velocity(200);
-    //   global::score.move_velocity(-200);
-    //   global::topFlex.move_velocity(200);
-    //   //gate open
-    // }
-
-    // if(master.get_digital(DIGITAL_B)) { //Hold B = Score Low
-    //   intaked = true;
-    //   global::intake.move_velocity(-200);
-    //   global::score.move_velocity(200);
-    //   global::topFlex.move_velocity(200);
-    //   //gate open
-    // }
 
     if (master.get_digital_new_press(DIGITAL_UP)) {
       global::descore.toggle();
     }
-    
+   
     if (master.get_digital_new_press(DIGITAL_DOWN)) {
       global::tongue.toggle();
     }
 
-    if (master.get_digital(DIGITAL_R2)) { // UP is pressed = Scoring in 
-      intaked = true;
-      global::intake.move_velocity(200);
-      global::score.move_velocity(-200);
-    } else if (master.get_digital(DIGITAL_L2)) { // DOWN is pressed = Scoring out
-      intaked = true;
-      global::intake.move_velocity(-200);
-      global::score.move_velocity(200);
+    if (master.get_digital(DIGITAL_R2)) {
+        global::intake.move_velocity(200);
+        global::score.move_velocity(-200);
+    } else if (master.get_digital(DIGITAL_L2)) {
+        global::intake.move_velocity(-200);
+        global::score.move_velocity(200);
     } else if (master.get_digital(DIGITAL_X)) {
-      intaked = true;
-      global::intake.move_velocity(-200);
-      global::score.move_velocity(200);
-      global::topFlex.move_velocity(200);
+        global::intake.move_velocity(200);
+        global::score.move_velocity(-200);
+        global::topFlex.move_velocity(-200);
     } else if (master.get_digital(DIGITAL_Y)) {
-      intaked = true;
-      global::intake.move_velocity(-200);
-      global::score.move_velocity(200);
-      global::topFlex.move_velocity(-200);
+        global::intake.move_velocity(200);
+        global::score.move_velocity(-200);
+        global::topFlex.move_velocity(200);
     } else if (master.get_digital(DIGITAL_B)) {
-      intaked = true;
-      global::intake.move_velocity(-200);
-      global::score.move_velocity(200);
-      global::topFlex.move_velocity(-200);
-    } else if (master.get_digital_new_press(DIGITAL_R1)) { // LEFT is pressed = Scoring stop
-      intaked = true;
-      global::intake.move_velocity(200);
-      global::score.move_velocity(-200);
-      global::topFlex.brake();
-    } else if (master.get_digital_new_press(DIGITAL_L1)) { // LEFT is pressed = Scoring stop
-      intaked = false;
-      global::intake.brake();
-      global::score.brake();
-      global::topFlex.brake(); 
+        global::intake.move_velocity(-200);
+        global::score.move_velocity(200);
+        global::topFlex.move_velocity(200);
     } else {
-      intaked = false;
-      global::intake.brake();
-      global::score.brake();
-      global::topFlex.brake();
+        if (!intaked) {
+          global::intake.brake();
+          global::score.brake();
+          global::topFlex.brake();
+        } else {
+          global::intake.move_velocity(200);
+          global::score.move_velocity(-200);
+          global::topFlex.brake();
+        }
     }
+   
+ 
+    if (master.get_digital_new_press(DIGITAL_R1)) {
+        intaked = true;
+        global::intake.move_velocity(200);
+        global::score.move_velocity(-200);
+        global::topFlex.brake();
+    } else if (master.get_digital_new_press(DIGITAL_L1)) {
+        intaked = false;
+        global::intake.brake();
+        global::score.brake();
+        global::topFlex.brake();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // //CAMERON CODE ********************************************************************************************************
 //     if(master.get_digital(DIGITAL_R2)){ //Hold R2 =  Intake
@@ -348,16 +369,18 @@ void opcontrol() {
 //       global::score.move_velocity(200);
 //     }
 
+
 //     if (master.get_digital_new_press(DIGITAL_B)) { //Lower goal
 //       global::intake.move_velocity(-200);
 //     }
 
-//     if (master.get_digital(DIGITAL_L2)) { //top goal 
+
+//     if (master.get_digital(DIGITAL_L2)) { //top goal
 //       if (descore) {
 //       global::intake.move_velocity(200);
 //       global::score.move_velocity(-200);
-//       global::topFlex.move_velocity(-200); 
-//       } 
+//       global::topFlex.move_velocity(-200);
+//       }
 //       else if (!descore) {
 //       global::descore.extend();
 //       global::intake.move_velocity(200);
@@ -371,16 +394,18 @@ void opcontrol() {
 //       global::topFlex.brake();
 //       descore = false;
 
+
     // if (master.get_digital(DIGITAL_L2)) { //Top goal
     //   global::intake.move_velocity(200);
     //   global::score.move_velocity(-200);
-    //   global::topFlex.move_velocity(-200); 
+    //   global::topFlex.move_velocity(-200);
     // } else {
     //   global::intake.brake();
     //   global::score.brake();
     //   global::topFlex.brake();
-      
+     
 //     }
+
 
 //     if (master.get_digital(DIGITAL_L1)) { //Middle goal
 //       global::intake.move_velocity(200);
@@ -392,6 +417,7 @@ void opcontrol() {
 //       global::topFlex.brake();
 //     }
 
+
 //     if (master.get_digital_new_press(DIGITAL_DOWN)) {
 //       if (tongue) { //if tongue is up, go down
 //         global::tongue.retract();
@@ -401,7 +427,7 @@ void opcontrol() {
 //         tongue = true;
 //      }
 //     }
-    
+   
 //     if (master.get_digital_new_press(DIGITAL_RIGHT)) { //Descore
 //       if (!descore) {
 //         global::descore.extend();
@@ -414,12 +440,16 @@ void opcontrol() {
 // //**************************************************************************************************************************************** */
 
 
+
+
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
         }
       }
-    
+   
+
 
 //run this before pros m
 //    pros m --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"
 //    pros mu --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"
 //idk why but for now do it
+
