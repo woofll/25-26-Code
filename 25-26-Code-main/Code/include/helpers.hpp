@@ -1,12 +1,14 @@
 #include "main.h"
 //void functionName();
 
-void intaking();
-void outtakeTop();
-void outtakeMiddle();
-void outtakeBottom();
-void outtakeStop();
-void stop();
+void intake();
+void outTop();
+void outMid();
+void outLow();
+void stopAll();
 
-void plateExtend();
-void plateRetract();
+void tongueOut();
+void tongueIn();
+
+void descoreExtend();
+void descoreRetract();

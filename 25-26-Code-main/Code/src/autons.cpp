@@ -336,13 +336,14 @@ void redTop() {
 }
 
 void blueTop() {
+  chassis.pid_drive_set(24_in, DRIVE_SPEED);
+  chassis.pid_wait();
+}
+
+void blueLow() {
 
 }
 
-void blueBottom() {
-
-}
-
-void redBottom() {
+void redLow() {
 
 }

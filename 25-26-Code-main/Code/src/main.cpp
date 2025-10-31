@@ -34,7 +34,7 @@ void initialize() {
   // Look at your horizontal tracking wheel and decide if it's in front of the midline of your robot or behind it
   //  - change `back` to `front` if the tracking wheel is in front of the midline
   //  - ignore this if you aren't using a horizontal tracker
-  // chassis.odom_tracker_back_set(&horiz_tracker);
+  // chassis.odom_tracker_back_set(&horiz_tracker);]=----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Look at your vertical tracking wheel and decide if it's to the left or right of the center of the robot
   //  - change `left` to `right` if the tracking wheel is to the right of the centerline
   //  - ignore this if you aren't using a vertical tracker
@@ -54,7 +54,12 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      {"Drive\n\nDrive forward and come back", drive_pid},
+      Auton{"bluetop!", blueTop},
+      Auton{"redTop!", redTop},
+      Auton{"blueLow!", blueLow},
+      Auton{"redLow!", redLow},
+      Auton{"Drive\n\nDrive forward and come back", drive_pid},
+
   });
 
   // Initialize chassis and auton selector
@@ -101,21 +106,7 @@ void autonomous() {
   chassis.drive_imu_reset();                  // Reset gyro position to 0
   chassis.drive_sensor_reset();               // Reset drive sensors to 0
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
-  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
-
-  /*
-  Odometry and Pure Pursuit are not magic
-
-  It is possible to get perfectly consistent results without tracking wheels,
-  but it is also possible to have extremely inconsistent results without tracking wheels.
-  When you don't use tracking wheels, you need to:
-   - avoid wheel slip
-   - avoid wheelies
-   - avoid throwing momentum around (super harsh turns, like in the example below)
-  You can do cool curved motions, but you have to give your robot the best chance
-  to be consistent
-  */
-
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency.
   ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
 }
 
@@ -228,9 +219,21 @@ void opcontrol() {
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
 
   // variable start
-  bool tongue = false; //Tongue is up
+  bool tongue = true; //Tongue is up
+  bool descore = false; //Descore is retracted
+  bool intaked = false; //Intaking is active
+  bool top, mid, low = false; //Scoring positions
+ 
+  //Test variables
+  static bool ranAuton = false;
+  bool x = false;
+  bool inOut = false;
 
   // variable end
+
+  if (master.get_digital_new_press(DIGITAL_B) && master.get_digital_new_press(DIGITAL_DOWN)) {
+    blueTop;
+  }
 
 
   while (true) {
@@ -243,70 +246,178 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
-    // . . .
-    // Put more user control code here!
-    // . . .
-
-// Scoring Control
-    if (master.get_digital_new_press(DIGITAL_UP)) { // UP is pressed = Scoring in 
-      global::intake.move_velocity(200);
-      global::score.move_velocity(-200); 
-    } else if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN is pressed = Scoring out
-      global::intake.move_velocity(-200);
-      global::score.move_velocity(200); 
-    } else if (master.get_digital_new_press(DIGITAL_LEFT)) { // LEFT is pressed = Scoring stop
-      global::intake.brake();
-      global::score.brake();
+    if (master.get_digital(DIGITAL_X) && master.get_digital(DIGITAL_A) && !ranAuton) {
+      autonomous();
+      ranAuton = true;
     }
 
-// Slow Reverse Intake for Parking
-    if (master.get_digital(DIGITAL_Y)) { //Hold down Y = Intake reverses slowly for parking
-      global::intake.move_velocity(-20);
-    }
-
-// Top Flex Wheel Control
-    // if (master.get_digital(DIGITAL_R1)) { //R1 is held = Top Goal
-    //   global::topFlex.move_velocity(200);
-    // } else if (master.get_digital(DIGITAL_R2)){ //R2 is held = Middle Goal
-    //   global::topFlex.move_velocity(-200);
-    // } else if (!master.get_digital(DIGITAL_R1) && !master.get_digital(DIGITAL_R2)){ //Flex not moving = Vibrate
+    // if (master.get_digital_new_press(DIGITAL_R2)) { // UP is pressed = Scoring in 
+    //   bool intaked = true;
+    //   global::intake.move_velocity(200);
+    //   global::score.move_velocity(-200);
+    // } else if (master.get_digital_new_press(DIGITAL_L2)) { // DOWN is pressed = Scoring out
+    //   intaked = true;
+    //   global::intake.move_velocity(-200);
+    //   global::score.move_velocity(200);
+    // } else if (master.get_digital_new_press(DIGITAL_L1)) { // LEFT is pressed = Scoring stop
+    //   intaked = false;
+    //   global::intake.brake();
+    //   global::score.brake();
     //   global::topFlex.brake();
+    // }
+
+    // if(master.get_digital(DIGITAL_X)) { //Hold X = Score Top 
+    //   intaked = true;
+    //   global::intake.move_velocity(200);
+    //   global::score.move_velocity(-200);
+    //   global::topFlex.move_velocity(-200);
+    //   //gate open
     // } 
 
-    if (master.get_digital(DIGITAL_R1)) { //R1 is held = Top Goal
-      global::topFlex.move_velocity(200);
-    } else if (master.get_digital(DIGITAL_R2)){ //R2 is held = Middle Goal
-      global::topFlex.move_velocity(-200);
-    } else if (!master.get_digital(DIGITAL_R1) && !master.get_digital(DIGITAL_R2)){ //None pressed = stop
-      global::topFlex.brake();
-    } 
+    // if(master.get_digital(DIGITAL_Y)) { //Hold Y = Score Middle
+    //   intaked = true;
+    //   global::intake.move_velocity(200);
+    //   global::score.move_velocity(-200);
+    //   global::topFlex.move_velocity(200);
+    //   //gate open
+    // }
 
-  // Tongue Control (Like the thing for when tower and boom balls get out)
-    if (master.get_digital_new_press(DIGITAL_L1) && !tongue) {
-      global::tongue.retract(); //Go down
-      tongue = true;
-    } else if (master.get_digital_new_press(DIGITAL_L1) && tongue) {
-      global::tongue.extend(); //Go up
-      tongue = false;
+    // if(master.get_digital(DIGITAL_B)) { //Hold B = Score Low
+    //   intaked = true;
+    //   global::intake.move_velocity(-200);
+    //   global::score.move_velocity(200);
+    //   global::topFlex.move_velocity(200);
+    //   //gate open
+    // }
+
+    if (master.get_digital_new_press(DIGITAL_UP)) {
+      global::descore.toggle();
     }
-
-    if (master.get_digital_new_press(DIGITAL_L2)) {
+    
+    if (master.get_digital_new_press(DIGITAL_DOWN)) {
       global::tongue.toggle();
     }
 
-    // if (master.get_digital_new_press(DIGITAL_L1)) {
-    //   global::tongue.extend();
-    // } else if (master.get_digital_new_press(DIGITAL_L2)) {
-    //   global::tongue.retract();
-    // }
+    if (master.get_digital(DIGITAL_R2)) { // UP is pressed = Scoring in 
+      intaked = true;
+      global::intake.move_velocity(200);
+      global::score.move_velocity(-200);
+    } else if (master.get_digital(DIGITAL_L2)) { // DOWN is pressed = Scoring out
+      intaked = true;
+      global::intake.move_velocity(-200);
+      global::score.move_velocity(200);
+    } else if (master.get_digital(DIGITAL_X)) {
+      intaked = true;
+      global::intake.move_velocity(-200);
+      global::score.move_velocity(200);
+      global::topFlex.move_velocity(200);
+    } else if (master.get_digital(DIGITAL_Y)) {
+      intaked = true;
+      global::intake.move_velocity(-200);
+      global::score.move_velocity(200);
+      global::topFlex.move_velocity(-200);
+    } else if (master.get_digital(DIGITAL_B)) {
+      intaked = true;
+      global::intake.move_velocity(-200);
+      global::score.move_velocity(200);
+      global::topFlex.move_velocity(-200);
+    } else if (master.get_digital_new_press(DIGITAL_R1)) { // LEFT is pressed = Scoring stop
+      intaked = true;
+      global::intake.move_velocity(200);
+      global::score.move_velocity(-200);
+      global::topFlex.brake();
+    } else if (master.get_digital_new_press(DIGITAL_L1)) { // LEFT is pressed = Scoring stop
+      intaked = false;
+      global::intake.brake();
+      global::score.brake();
+      global::topFlex.brake(); 
+    } else {
+      intaked = false;
+      global::intake.brake();
+      global::score.brake();
+      global::topFlex.brake();
+    }
+
+// //CAMERON CODE ********************************************************************************************************
+//     if(master.get_digital(DIGITAL_R2)){ //Hold R2 =  Intake
+//       global::intake.move_velocity(200);
+//       global::score.move_velocity(-200);
+//     }
+//     if(master.get_digital(DIGITAL_R1)){ //Hold R1 = Reverse Intake
+//       global::intake.move_velocity(-200);
+//       global::score.move_velocity(200);
+//     }
+
+//     if (master.get_digital_new_press(DIGITAL_B)) { //Lower goal
+//       global::intake.move_velocity(-200);
+//     }
+
+//     if (master.get_digital(DIGITAL_L2)) { //top goal 
+//       if (descore) {
+//       global::intake.move_velocity(200);
+//       global::score.move_velocity(-200);
+//       global::topFlex.move_velocity(-200); 
+//       } 
+//       else if (!descore) {
+//       global::descore.extend();
+//       global::intake.move_velocity(200);
+//       global::score.move_velocity(-200);
+//       global::topFlex.move_velocity(-200);
+//       descore = true;
+//     } else {
+//       global::descore.retract();
+//       global::intake.brake();
+//       global::score.brake();
+//       global::topFlex.brake();
+//       descore = false;
+
+    // if (master.get_digital(DIGITAL_L2)) { //Top goal
+    //   global::intake.move_velocity(200);
+    //   global::score.move_velocity(-200);
+    //   global::topFlex.move_velocity(-200); 
+    // } else {
+    //   global::intake.brake();
+    //   global::score.brake();
+    //   global::topFlex.brake();
+      
+//     }
+
+//     if (master.get_digital(DIGITAL_L1)) { //Middle goal
+//       global::intake.move_velocity(200);
+//       global::score.move_velocity(-200);
+//       global::topFlex.move_velocity(200);
+//     } else {
+//       global::intake.brake();
+//       global::score.brake();
+//       global::topFlex.brake();
+//     }
+
+//     if (master.get_digital_new_press(DIGITAL_DOWN)) {
+//       if (tongue) { //if tongue is up, go down
+//         global::tongue.retract();
+//         tongue = false;
+//     } else if (!tongue) { //if tongue is down, go up
+//       global::tongue.extend();
+//         tongue = true;
+//      }
+//     }
+    
+//     if (master.get_digital_new_press(DIGITAL_RIGHT)) { //Descore
+//       if (!descore) {
+//         global::descore.extend();
+//         descore = true;
+//       } else if (descore) {
+//         global::descore.retract();
+//         descore = false;
+//       }
+//     }
+// //**************************************************************************************************************************************** */
+
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
-  }
-}
-
-
-//Potential button mappings
-// 
+        }
+      }
+    
 
 //run this before pros m
 //    pros m --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"

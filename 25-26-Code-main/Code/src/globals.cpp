@@ -8,8 +8,8 @@ pros::Motor intake(20, pros::v5::MotorGearset::rpm_200);
 pros::Motor score(19, pros::v5::MotorGearset::rpm_200); 
 pros::Motor topFlex(9, pros::v5::MotorGearset::rpm_200); //Flex Wheel
 
-pros::adi::Pneumatics tongue('A', false); //Starts extended
+pros::adi::Pneumatics tongue('A', true); //Starts extended
 //Note, we haven't actually built descore or gate yet!!!
-pros::adi::Pneumatics descore('B', false);
+pros::adi::Pneumatics descore('H', false);
 pros::adi::Pneumatics gate('C', true); 
 }
