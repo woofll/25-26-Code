@@ -309,41 +309,119 @@ void measure_offsets() {
 // Make your own autonomous functions here!
 // . . .
 
-void redTop() {
-  //Facing North
-  
-  /*
-  Turn -30deg
-  Grab three center corner blocks
-  Turn xdeg to face goal (backward)
-  Drive to goal
-  Score for xsec (try to only score 1 or 2)
 
-  Go forward to direction of loader until perpendicular to wall
-  Turn to be perpedicular with fall
-  Extend plate
-  Drive forward 
-  Wait x seconds to grab 3-4 blocks
-  
-  Back up a bit
-  retract plate
-  back up until hit stand of tube
-  Dispense max sec
-  Back up for 6in
-
-  end facing north
-  */
-}
-
-void blueTop() {
-  chassis.pid_drive_set(24_in, DRIVE_SPEED);
+void redLeft() {  
+  global::tongue.extend();
+  chassis.pid_turn_set(-14_deg, DRIVE_SPEED);
   chassis.pid_wait();
+
+  intake();
+  chassis.pid_drive_set(30_in, 30);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(-140_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(35_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(-180_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-24_in, 90);
+  chassis.pid_wait();
+
+  outTop();
+  pros::delay(3000);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  stopAll();
 }
 
-void blueLow() {
+void blueLeft() {
+  global::tongue.extend();
+  chassis.pid_turn_set(-14_deg, DRIVE_SPEED);
+  chassis.pid_wait();
 
+  intake();
+  chassis.pid_drive_set(30_in, 30);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(-140_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(35_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(-180_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-24_in, 90);
+  chassis.pid_wait();
+
+  outTop();
+  pros::delay(3000);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  stopAll();
 }
 
-void redLow() {
+void blueRight() {
+  global::tongue.extend();
+  chassis.pid_turn_set(14_deg, DRIVE_SPEED);
+  chassis.pid_wait();
 
+  intake();
+  chassis.pid_drive_set(30_in, 30);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(140_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(35_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-24_in, 90);
+  chassis.pid_wait();
+
+  outTop();
+  pros::delay(3000);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  stopAll();
+}
+
+void redRight() {
+  global::tongue.extend();
+  chassis.pid_turn_set(14_deg, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  intake();
+  chassis.pid_drive_set(30_in, 30);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(140_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(35_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_drive_set(-24_in, 90);
+  chassis.pid_wait();
+
+  outTop();
+  pros::delay(3000);
+  chassis.pid_drive_set(8_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  stopAll();
 }
