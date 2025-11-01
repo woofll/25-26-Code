@@ -13,7 +13,7 @@ void odom_drive_example();
 void odom_pure_pursuit_example();
 void odom_pure_pursuit_wait_until_example();
 
-void redTop();
-void redLow();
-void blueTop();
-void blueLow();
+void redLeft();
+void redRight();
+void blueLeft();
+void blueRight();

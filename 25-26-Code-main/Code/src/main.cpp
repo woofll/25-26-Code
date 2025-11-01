@@ -14,7 +14,7 @@ ez::Drive chassis(
     {16, 18},  // Right Chassis Ports (negative port will reverse it!)
 
 
-    15,      // IMU Port
+    8,      // IMU Port (15 = radio)
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     360);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
@@ -65,10 +65,10 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton{"bluetop!", blueTop},
-      Auton{"redTop!", redTop},
-      Auton{"blueLow!", blueLow},
-      Auton{"redLow!", redLow},
+      Auton{"blueLeft!", blueLeft},
+      Auton{"redLeft!", redLeft},
+      Auton{"blueRight!", blueRight},
+      Auton{"redRight!", redRight},
       Auton{"Drive\n\nDrive forward and come back", drive_pid},
 
 
@@ -265,7 +265,7 @@ void opcontrol() {
       chassis.drive_sensor_reset();
       chassis.odom_xyt_set(0_in, 0_in, 0_deg);
       chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
-      blueTop();
+      blueLeft();
       // Restore preferred opcontrol brake mode
       chassis.drive_brake_set(MOTOR_BRAKE_COAST);
     }
@@ -279,12 +279,10 @@ void opcontrol() {
     ez_template_extras();
     if (!pros::competition::is_connected()){
       if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)) {
-        autonomous();
-        blueTop();
-      }
+        blueLeft();
+      }   
+
     }
-
-
 
     // chassis.opcontrol_tank();  // Tank control
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
@@ -293,13 +291,34 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
 
+    // if (master.get_digital_new_press(DIGITAL_UP)) {
+    //   global::descore.toggle();
+    // }
+   
+    // if (master.get_digital_new_press(DIGITAL_DOWN)) {
+    //   global::tongue.toggle();
+    // }
+    
     if (master.get_digital_new_press(DIGITAL_UP)) {
-      global::descore.toggle();
+      if (!descore) {
+        global::descore.extend();
+        descore = true;
+      } else if (descore) {
+        global::descore.retract();
+        descore = false;
+      }
     }
    
     if (master.get_digital_new_press(DIGITAL_DOWN)) {
-      global::tongue.toggle();
+      if (tongue) {
+        global::tongue.retract();
+        tongue = false;
+      } else if (!tongue) {
+        global::tongue.extend();
+        tongue = true;
+      }
     }
+
 
     if (master.get_digital(DIGITAL_R2)) {
         global::intake.move_velocity(200);
@@ -343,19 +362,6 @@ void opcontrol() {
         global::score.brake();
         global::topFlex.brake();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
