@@ -13,7 +13,5 @@ void odom_drive_example();
 void odom_pure_pursuit_example();
 void odom_pure_pursuit_wait_until_example();
 
-void redLeft();
-void redRight();
-void blueLeft();
-void blueRight();
+void leftAuto();
+void rightAuto();

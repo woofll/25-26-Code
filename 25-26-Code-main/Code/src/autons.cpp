@@ -309,119 +309,118 @@ void measure_offsets() {
 // Make your own autonomous functions here!
 // . . .
 
+// void leftAuto() {
+//   global::tongue.extend();
+//   chassis.pid_turn_set(-14_deg, DRIVE_SPEED);
+//   chassis.pid_wait();
 
-void redLeft() {  
+//   intake();
+//   chassis.pid_drive_set(30_in, 30);
+//   chassis.pid_wait();
+
+//   chassis.pid_turn_set(-140_deg, TURN_SPEED);
+//   chassis.pid_wait();
+
+//   chassis.pid_drive_set(35_in, DRIVE_SPEED);
+//   chassis.pid_wait();
+
+//   chassis.pid_turn_set(-180_deg, TURN_SPEED);
+//   chassis.pid_wait();
+
+//   chassis.pid_drive_set(-24_in, 90);
+//   chassis.pid_wait();
+
+//   outTop();
+//   pros::delay(3000);
+//   chassis.pid_drive_set(8_in, DRIVE_SPEED);
+//   chassis.pid_wait();
+
+//   stopAll();
+// }
+
+
+void leftAuto() {  
   global::tongue.extend();
-  chassis.pid_turn_set(-14_deg, DRIVE_SPEED);
+  chassis.pid_drive_set(2_in, DRIVE_SPEED);
+  chassis.pid_wait();
+  global::descore.extend();
+  chassis.pid_turn_set(-13_deg, DRIVE_SPEED);
   chassis.pid_wait();
 
-  intake();
+  intake(); //Intake runs, collects three corner blocks
   chassis.pid_drive_set(30_in, 30);
+  global::descore.retract();
   chassis.pid_wait();
 
   chassis.pid_turn_set(-140_deg, TURN_SPEED);
   chassis.pid_wait();
 
-  chassis.pid_drive_set(35_in, DRIVE_SPEED);
+  chassis.pid_drive_set(36_in, DRIVE_SPEED);
   chassis.pid_wait();
 
+  stopAll(); //Stops all intake motors so no particle accelerator
   chassis.pid_turn_set(-180_deg, TURN_SPEED);
   chassis.pid_wait();
 
-  chassis.pid_drive_set(-24_in, 90);
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED);
   chassis.pid_wait();
 
-  outTop();
-  pros::delay(3000);
-  chassis.pid_drive_set(8_in, DRIVE_SPEED);
+  outTop(); //Scores on top goal
+  pros::delay(1500);
+  stopAll();
+  global::score.move_velocity(200); //Brief stop,
+  pros::delay(500);
+  outTop(); //Starts scoring some more
+  pros::delay(1000);
+  chassis.pid_drive_set(8_in, 127);
+  chassis.pid_wait();
+  global::descore.extend();
+  chassis.pid_drive_set(-10_in, 127); //Rams descore into blocks, push them to control zone
   chassis.pid_wait();
 
   stopAll();
 }
 
-void blueLeft() {
+
+void rightAuto() {
   global::tongue.extend();
-  chassis.pid_turn_set(-14_deg, DRIVE_SPEED);
+  chassis.pid_drive_set(2_in, DRIVE_SPEED);
+  chassis.pid_wait();
+  global::descore.extend();
+  chassis.pid_turn_set(13_deg, DRIVE_SPEED);
   chassis.pid_wait();
 
-  intake();
+  intake(); //Intake runs, collects three corner blocks
   chassis.pid_drive_set(30_in, 30);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(-140_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(35_in, DRIVE_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(-180_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(-24_in, 90);
-  chassis.pid_wait();
-
-  outTop();
-  pros::delay(3000);
-  chassis.pid_drive_set(8_in, DRIVE_SPEED);
-  chassis.pid_wait();
-
-  stopAll();
-}
-
-void blueRight() {
-  global::tongue.extend();
-  chassis.pid_turn_set(14_deg, DRIVE_SPEED);
-  chassis.pid_wait();
-
-  intake();
-  chassis.pid_drive_set(30_in, 30);
+  global::descore.retract();
   chassis.pid_wait();
 
   chassis.pid_turn_set(140_deg, TURN_SPEED);
   chassis.pid_wait();
 
-  chassis.pid_drive_set(35_in, DRIVE_SPEED);
+  chassis.pid_drive_set(36_in, DRIVE_SPEED);
   chassis.pid_wait();
 
+  stopAll(); //Stops all intake motors so no particle accelerator
   chassis.pid_turn_set(180_deg, TURN_SPEED);
   chassis.pid_wait();
 
-  chassis.pid_drive_set(-24_in, 90);
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED);
   chassis.pid_wait();
 
-  outTop();
-  pros::delay(3000);
-  chassis.pid_drive_set(8_in, DRIVE_SPEED);
+  outTop(); //Scores on top goal
+  pros::delay(1500);
+  stopAll();
+  global::score.move_velocity(200); //Brief stop,
+  pros::delay(500);
+  outTop(); //Starts scoring some more
+  pros::delay(1000);
+  chassis.pid_drive_set(8_in, 127);
+  chassis.pid_wait();
+  global::descore.extend();
+  chassis.pid_drive_set(-10_in, 127); //Rams descore into blocks, push them to control zone
   chassis.pid_wait();
 
   stopAll();
 }
 
-void redRight() {
-  global::tongue.extend();
-  chassis.pid_turn_set(14_deg, DRIVE_SPEED);
-  chassis.pid_wait();
-
-  intake();
-  chassis.pid_drive_set(30_in, 30);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(140_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(35_in, DRIVE_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(180_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(-24_in, 90);
-  chassis.pid_wait();
-
-  outTop();
-  pros::delay(3000);
-  chassis.pid_drive_set(8_in, DRIVE_SPEED);
-  chassis.pid_wait();
-
-  stopAll();
-}
