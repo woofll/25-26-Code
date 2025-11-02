@@ -65,10 +65,8 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton{"blueLeft!", blueLeft},
-      Auton{"redLeft!", redLeft},
-      Auton{"blueRight!", blueRight},
-      Auton{"redRight!", redRight},
+      Auton{"LEFT SIDE!", leftAuto},
+      Auton{"RIGHT SIDE", rightAuto},
       Auton{"Drive\n\nDrive forward and come back", drive_pid},
 
 
@@ -265,7 +263,7 @@ void opcontrol() {
       chassis.drive_sensor_reset();
       chassis.odom_xyt_set(0_in, 0_in, 0_deg);
       chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
-      blueLeft();
+      leftAuto();
       // Restore preferred opcontrol brake mode
       chassis.drive_brake_set(MOTOR_BRAKE_COAST);
     }
@@ -278,9 +276,12 @@ void opcontrol() {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
     if (!pros::competition::is_connected()){
-      if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)) {
-        blueLeft();
+      if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_LEFT)) {
+        leftAuto();
       }   
+      if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_RIGHT)){
+        rightAuto();
+      }
 
     }
 
@@ -291,33 +292,36 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
 
+    if (master.get_digital_new_press(DIGITAL_UP)) {
+      global::descore.toggle();
+    } 
+   
+    if (master.get_digital_new_press(DIGITAL_DOWN)) {
+      global::tongue.toggle();
+    }
+ 
+    
     // if (master.get_digital_new_press(DIGITAL_UP)) {
-    //   global::descore.toggle();
+    //   descore = global::descore.is_extended();
+    //   if (!descore) {
+    //     global::descore.extend();
+    //     descore = true;
+    //   } else if (descore) {
+    //     global::descore.retract();
+    //     descore = false;
+    //   }
     // }
    
     // if (master.get_digital_new_press(DIGITAL_DOWN)) {
-    //   global::tongue.toggle();
+    //   tongue = global::tongue.is_extended();
+    //   if (tongue) {
+    //     global::tongue.retract();
+    //     tongue = false;
+    //   } else if (!tongue) {
+    //     global::tongue.extend();
+    //     tongue = true;
+    //   }
     // }
-    
-    if (master.get_digital_new_press(DIGITAL_UP)) {
-      if (!descore) {
-        global::descore.extend();
-        descore = true;
-      } else if (descore) {
-        global::descore.retract();
-        descore = false;
-      }
-    }
-   
-    if (master.get_digital_new_press(DIGITAL_DOWN)) {
-      if (tongue) {
-        global::tongue.retract();
-        tongue = false;
-      } else if (!tongue) {
-        global::tongue.extend();
-        tongue = true;
-      }
-    }
 
 
     if (master.get_digital(DIGITAL_R2)) {
