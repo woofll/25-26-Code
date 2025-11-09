@@ -2,10 +2,13 @@
 //void functionName();
 
 void intake();
+void reverseIntake();
 void outTop();
 void outMid();
 void outLow();
 void stopAll();
+
+void matchLoad();
 
 void tongueOut();
 void tongueIn();

@@ -10,18 +10,18 @@
 // Chassis constructor
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
-    {-1, -10},     // Left Chassis Ports (negative port will reverse it!)
-    {16, 18},  // Right Chassis Ports (negative port will reverse it!)
+    {-15, -14, -13},     // Left Chassis Ports (negative port will reverse it!)
+    {18, -19, 20},  // Right Chassis Ports (negative port will reverse it!)
 
 
-    8,      // IMU Port (15 = radio)
+    17,      // IMU Port (15 = radio)
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     360);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
 
 // Uncomment the trackers  you're using here!
-// ez::tracking_wheel horiz_tracker(8, 2.75, 4.0);  // This tracking wheel is perpendicular to the drive wheels
-// ez::tracking_wheel vert_track er(9, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
+ez::tracking_wheel horiz_tracker(16, 2, 5.25);  // This tracking wheel is perpendicular to the drive wheels
+// ez::tracking_wheel vert_tracker(9, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
 
 
 /**
@@ -41,7 +41,7 @@ void initialize() {
   // Look at your horizontal tracking wheel and decide if it's in front of the midline of your robot or behind it
   //  - change `back` to `front` if the tracking wheel is in front of the midline
   //  - ignore this if you aren't using a horizontal tracker
-  // chassis.odom_tracker_back_set(&horiz_tracker);]=----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  // chassis.odom_tracker_back_set(&horiz_tracker);
   // Look at your vertical tracking wheel and decide if it's to the left or right of the center of the robot
   //  - change `left` to `right` if the tracking wheel is to the right of the centerline
   //  - ignore this if you aren't using a vertical tracker
@@ -157,6 +157,9 @@ void ez_screen_task() {
                                "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
                                "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
                            1);  // Don't override the top Page line
+      
+          
+                          
 
 
           // Display all trackers that are being used
@@ -226,6 +229,7 @@ void ez_template_extras() {
 }
 
 
+
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -248,27 +252,10 @@ void opcontrol() {
   bool tongue = true; //Tongue is up
   bool descore = false; //Descore is retracted
   bool intaked = false; //Intaking is active
-  bool top, mid, low = false; //Scoring positions
+
 
 
   // variable end
-
-
-  if (master.get_digital_new_press(DIGITAL_B) && master.get_digital_new_press(DIGITAL_DOWN)) {
-    // Quick test: run the blueTop autonomous directly (only when not connected to competition)
-    if (!pros::competition::is_connected()) {
-      // Prepare sensors / chassis exactly like autonomous() does
-      chassis.pid_targets_reset();
-      chassis.drive_imu_reset();
-      chassis.drive_sensor_reset();
-      chassis.odom_xyt_set(0_in, 0_in, 0_deg);
-      chassis.drive_brake_set(MOTOR_BRAKE_HOLD);
-      leftAuto();
-      // Restore preferred opcontrol brake mode
-      chassis.drive_brake_set(MOTOR_BRAKE_COAST);
-    }
-  }
-
 
 
 
@@ -283,7 +270,19 @@ void opcontrol() {
         rightAuto();
       }
 
-    }
+      if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_X)){
+        driveFwd24();
+      }
+      if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_B)){
+        driveBack24();
+      }
+      if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_Y)){
+        turnCW90();
+      }
+      if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_A)){
+        turnCCW90();
+      }
+    
 
     // chassis.opcontrol_tank();  // Tank control
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
@@ -294,172 +293,45 @@ void opcontrol() {
 
     if (master.get_digital_new_press(DIGITAL_UP)) {
       global::descore.toggle();
-    } 
-   
+    }
     if (master.get_digital_new_press(DIGITAL_DOWN)) {
       global::tongue.toggle();
     }
+
  
-    
-    // if (master.get_digital_new_press(DIGITAL_UP)) {
-    //   descore = global::descore.is_extended();
-    //   if (!descore) {
-    //     global::descore.extend();
-    //     descore = true;
-    //   } else if (descore) {
-    //     global::descore.retract();
-    //     descore = false;
-    //   }
-    // }
-   
-    // if (master.get_digital_new_press(DIGITAL_DOWN)) {
-    //   tongue = global::tongue.is_extended();
-    //   if (tongue) {
-    //     global::tongue.retract();
-    //     tongue = false;
-    //   } else if (!tongue) {
-    //     global::tongue.extend();
-    //     tongue = true;
-    //   }
-    // }
-
-
-    if (master.get_digital(DIGITAL_R2)) {
-        global::intake.move_velocity(200);
-        global::score.move_velocity(-200);
-    } else if (master.get_digital(DIGITAL_L2)) {
-        global::intake.move_velocity(-200);
-        global::score.move_velocity(200);
+    if (master.get_digital(DIGITAL_R2)) { //Intake in
+      intake();
+    } else if (master.get_digital(DIGITAL_L2)) { //Intake out
+      reverseIntake();
     } else if (master.get_digital(DIGITAL_X)) {
-        global::intake.move_velocity(200);
-        global::score.move_velocity(-200);
-        global::topFlex.move_velocity(-200);
+      outTop();
     } else if (master.get_digital(DIGITAL_Y)) {
-        global::intake.move_velocity(200);
-        global::score.move_velocity(-200);
-        global::topFlex.move_velocity(200);
+      outMid();
     } else if (master.get_digital(DIGITAL_B)) {
-        global::intake.move_velocity(-200);
-        global::score.move_velocity(200);
-        global::topFlex.move_velocity(200);
+      outLow();
     } else {
-        if (!intaked) {
-          global::intake.brake();
-          global::score.brake();
-          global::topFlex.brake();
-        } else {
-          global::intake.move_velocity(200);
-          global::score.move_velocity(-200);
-          global::topFlex.brake();
-        }
-    }
-   
- 
-    if (master.get_digital_new_press(DIGITAL_R1)) {
-        intaked = true;
-        global::intake.move_velocity(200);
-        global::score.move_velocity(-200);
-        global::topFlex.brake();
-    } else if (master.get_digital_new_press(DIGITAL_L1)) {
-        intaked = false;
-        global::intake.brake();
-        global::score.brake();
-        global::topFlex.brake();
-    }
-
-
-
-// //CAMERON CODE ********************************************************************************************************
-//     if(master.get_digital(DIGITAL_R2)){ //Hold R2 =  Intake
-//       global::intake.move_velocity(200);
-//       global::score.move_velocity(-200);
-//     }
-//     if(master.get_digital(DIGITAL_R1)){ //Hold R1 = Reverse Intake
-//       global::intake.move_velocity(-200);
-//       global::score.move_velocity(200);
-//     }
-
-
-//     if (master.get_digital_new_press(DIGITAL_B)) { //Lower goal
-//       global::intake.move_velocity(-200);
-//     }
-
-
-//     if (master.get_digital(DIGITAL_L2)) { //top goal
-//       if (descore) {
-//       global::intake.move_velocity(200);
-//       global::score.move_velocity(-200);
-//       global::topFlex.move_velocity(-200);
-//       }
-//       else if (!descore) {
-//       global::descore.extend();
-//       global::intake.move_velocity(200);
-//       global::score.move_velocity(-200);
-//       global::topFlex.move_velocity(-200);
-//       descore = true;
-//     } else {
-//       global::descore.retract();
-//       global::intake.brake();
-//       global::score.brake();
-//       global::topFlex.brake();
-//       descore = false;
-
-
-    // if (master.get_digital(DIGITAL_L2)) { //Top goal
-    //   global::intake.move_velocity(200);
-    //   global::score.move_velocity(-200);
-    //   global::topFlex.move_velocity(-200);
-    // } else {
-    //   global::intake.brake();
-    //   global::score.brake();
-    //   global::topFlex.brake();
-     
-//     }
-
-
-//     if (master.get_digital(DIGITAL_L1)) { //Middle goal
-//       global::intake.move_velocity(200);
-//       global::score.move_velocity(-200);
-//       global::topFlex.move_velocity(200);
-//     } else {
-//       global::intake.brake();
-//       global::score.brake();
-//       global::topFlex.brake();
-//     }
-
-
-//     if (master.get_digital_new_press(DIGITAL_DOWN)) {
-//       if (tongue) { //if tongue is up, go down
-//         global::tongue.retract();
-//         tongue = false;
-//     } else if (!tongue) { //if tongue is down, go up
-//       global::tongue.extend();
-//         tongue = true;
-//      }
-//     }
-   
-//     if (master.get_digital_new_press(DIGITAL_RIGHT)) { //Descore
-//       if (!descore) {
-//         global::descore.extend();
-//         descore = true;
-//       } else if (descore) {
-//         global::descore.retract();
-//         descore = false;
-//       }
-//     }
-// //**************************************************************************************************************************************** */
-
-
-
-
-    pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
-        }
+      if (!intaked) {
+        stopAll();
+      } else {
+        intake();
       }
-   
+    }
 
+    if (master.get_digital_new_press(DIGITAL_R1)) {
+      intaked = true;
+      intake();
+    } else if (master.get_digital_new_press(DIGITAL_L1)) {
+      intaked = false;
+      stopAll();
+    }
+ 
+    pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
+  }
+} 
+}
 
 //run this before pros m
 //    pros m --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"
 //    pros mu --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"
 //idk why but for now do it
-
+// PID site https://ez-robotics.github.io/EZ-Template/tutorials/tuning_pid_constants

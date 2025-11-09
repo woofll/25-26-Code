@@ -4,12 +4,13 @@ namespace global{
 //pros::sensorType sensorName (portNumber);
 //pros::adi::Pneumatics pneumaticsName('portLetter', state(true/false));
 
-pros::Motor intake(20, pros::v5::MotorGearset::rpm_200);
-pros::Motor score(19, pros::v5::MotorGearset::rpm_200); 
-pros::Motor topFlex(9, pros::v5::MotorGearset::rpm_200); //Flex Wheel
+pros::Motor intake(11, pros::v5::MotorGearset::rpm_600);
+pros::Motor topRoller(12, pros::v5::MotorGearset::rpm_200); 
+pros::Motor hoodRoller(10, pros::v5::MotorGearset::rpm_200);
 
-pros::adi::Pneumatics tongue('A', true); //Starts extended
-//Note, we haven't actually built descore or gate yet!!!
-pros::adi::Pneumatics descore('H', false);
-pros::adi::Pneumatics gate('C', true); 
+pros::adi::Pneumatics tongue('A', false); //Starts extended
+pros::adi::Pneumatics descore('B', false);
+pros::adi::Pneumatics hood('C', true); //Starts retracted
+
+
 }

@@ -6,11 +6,11 @@ namespace global{
 //extern pros::adi::Pneumatics pneumaticsName;
 
 extern pros::Motor intake;
-extern pros::Motor score;
-extern pros::Motor topFlex;
+extern pros::Motor topRoller;
+extern pros::Motor hoodRoller;
 
 extern pros::adi::Pneumatics tongue;
 extern pros::adi::Pneumatics descore;
-extern pros::adi::Pneumatics gate;
+extern pros::adi::Pneumatics hood;
 
 }
