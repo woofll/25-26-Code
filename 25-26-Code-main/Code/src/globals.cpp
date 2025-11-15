@@ -10,7 +10,7 @@ pros::Motor hoodRoller(10, pros::v5::MotorGearset::rpm_200);
 
 pros::adi::Pneumatics tongue('A', false); //Starts extended
 pros::adi::Pneumatics descore('B', false);
-pros::adi::Pneumatics hood('C', true); //Starts retracted
+pros::adi::Pneumatics hood('C', false); //Starts retracted
 
 
 }

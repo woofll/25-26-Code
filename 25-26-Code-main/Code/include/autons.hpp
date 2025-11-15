@@ -17,6 +17,10 @@ void driveFwd24();
 void driveBack24();
 void turnCW90();
 void turnCCW90();
+void matchLoading();
 
-void leftAuto();
-void rightAuto();
+void leftMid();
+void rightMid();
+void leftTopOnly();
+void rightTopOnly();
+void intakeOnly();

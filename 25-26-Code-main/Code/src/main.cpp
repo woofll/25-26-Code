@@ -11,7 +11,7 @@
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
     {-15, -14, -13},     // Left Chassis Ports (negative port will reverse it!)
-    {18, -19, 20},  // Right Chassis Ports (negative port will reverse it!)
+    {18, 19, 20},  // Right Chassis Ports (negative port will reverse it!)
 
 
     17,      // IMU Port (15 = radio)
@@ -20,7 +20,7 @@ ez::Drive chassis(
 
 
 // Uncomment the trackers  you're using here!
-ez::tracking_wheel horiz_tracker(16, 2, 5.25);  // This tracking wheel is perpendicular to the drive wheels
+// ez::tracking_wheel horiz_tracker(16, 2, 5.25);  // This tracking wheel is perpendicular to the drive wheels
 // ez::tracking_wheel vert_tracker(9, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
 
 
@@ -65,9 +65,11 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton{"LEFT SIDE!", leftAuto},
-      Auton{"RIGHT SIDE", rightAuto},
-      Auton{"Drive\n\nDrive forward and come back", drive_pid},
+      Auton{"Left Side!\n\n\nMiddle Goals First!", leftMid},
+      Auton{"Right Side!\n\n\nMiddle Goals First!", rightMid},
+      Auton{"LEFT TOP ONLY", leftTopOnly},
+      Auton{"RIGHT TOP ONLY", rightTopOnly},
+      Auton{"Intake 3 balls only", intakeOnly},
 
 
   });
@@ -205,7 +207,7 @@ void ez_template_extras() {
     //  * use A and Y to increment / decrement the constants
     //  * use the arrow keys to navigate the constants
     if (master.get_digital_new_press(DIGITAL_X))
-      chassis.pid_tuner_toggle();
+      // chassis.pid_tuner_toggle();
 
 
     // Trigger the selected autonomous routine
@@ -263,25 +265,19 @@ void opcontrol() {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
     if (!pros::competition::is_connected()){
-      if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_LEFT)) {
-        leftAuto();
+      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_LEFT)) {
+        leftMid();
       }   
-      if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_RIGHT)){
-        rightAuto();
+      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_RIGHT)){
+        rightMid();
       }
-
-      if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_X)){
-        driveFwd24();
+      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_UP)){
+        leftTopOnly();
       }
-      if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_B)){
-        driveBack24();
+      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_DOWN)){
+        rightTopOnly();
       }
-      if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_Y)){
-        turnCW90();
-      }
-      if (master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_A)){
-        turnCCW90();
-      }
+     }
     
 
     // chassis.opcontrol_tank();  // Tank control
@@ -304,11 +300,11 @@ void opcontrol() {
     } else if (master.get_digital(DIGITAL_L2)) { //Intake out
       reverseIntake();
     } else if (master.get_digital(DIGITAL_X)) {
-      outTop();
+      outLow();
     } else if (master.get_digital(DIGITAL_Y)) {
       outMid();
     } else if (master.get_digital(DIGITAL_B)) {
-      outLow();
+      outTop();
     } else {
       if (!intaked) {
         stopAll();
@@ -326,8 +322,7 @@ void opcontrol() {
     }
  
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
-  }
-} 
+  } 
 }
 
 //run this before pros m
