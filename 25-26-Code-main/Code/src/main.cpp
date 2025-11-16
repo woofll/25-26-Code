@@ -67,8 +67,8 @@ void initialize() {
   ez::as::auton_selector.autons_add({
       Auton{"Left Side!\n\n\nMiddle Goals First!", leftMid},
       Auton{"Right Side!\n\n\nMiddle Goals First!", rightMid},
-      Auton{"LEFT TOP ONLY", leftTopOnly},
-      Auton{"RIGHT TOP ONLY", rightTopOnly},
+      // Auton{"LEFT TOP ONLY", leftTopOnly},
+      // Auton{"RIGHT TOP ONLY", rightTopOnly},
       Auton{"Intake 3 balls only", intakeOnly},
 
 
@@ -287,7 +287,11 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
 
-    if (master.get_digital_new_press(DIGITAL_UP)) {
+    // if (master.get_digital_new_press(DIGITAL_UP)) {
+    //   global::descore.toggle();
+    // }
+    //cam
+    if (master.get_digital_new_press(DIGITAL_RIGHT)) {
       global::descore.toggle();
     }
     if (master.get_digital_new_press(DIGITAL_DOWN)) {
@@ -295,15 +299,34 @@ void opcontrol() {
     }
 
  
+    // if (master.get_digital(DIGITAL_R2)) { //Intake in
+    //   intake();
+    // } else if (master.get_digital(DIGITAL_L2)) { //Intake out
+    //   reverseIntake();
+    // } else if (master.get_digital(DIGITAL_X)) {
+    //   outLow();
+    // } else if (master.get_digital(DIGITAL_Y)) {
+    //   outMid();
+    // } else if (master.get_digital(DIGITAL_B)) {
+    //   outTop();
+    // } else {
+    //   if (!intaked) {
+    //     stopAll();
+    //   } else {
+    //     intake();
+    //   }
+    // }
+
+    //cam code
     if (master.get_digital(DIGITAL_R2)) { //Intake in
       intake();
     } else if (master.get_digital(DIGITAL_L2)) { //Intake out
       reverseIntake();
     } else if (master.get_digital(DIGITAL_X)) {
       outLow();
-    } else if (master.get_digital(DIGITAL_Y)) {
-      outMid();
     } else if (master.get_digital(DIGITAL_B)) {
+      outMid();
+    } else if (master.get_digital(DIGITAL_Y)) {
       outTop();
     } else {
       if (!intaked) {
