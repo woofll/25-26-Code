@@ -78,7 +78,7 @@ void drive_pid() {
 ///
 void turn_example() {
   // The first parameter is the target in degrees
-  // The second parameter is max speed the robot will drive at
+  // The second parameter is max speed the robot will drive 
 
   chassis.pid_turn_set(90_deg, TURN_SPEED);
   chassis.pid_wait();
@@ -377,47 +377,6 @@ void matchLoading() {
 
 }
 
-// void leftAuto() {  
-//   global::tongue.extend();
-//   chassis.pid_drive_set(2_in, DRIVE_SPEED);
-//   chassis.pid_wait();
-//   global::descore.extend();
-//   chassis.pid_turn_set(-13_deg, DRIVE_SPEED);
-//   chassis.pid_wait();
-
-//   intake(); //Intake runs, collects three corner blocks
-//   chassis.pid_drive_set(30_in, 30);
-//   global::descore.retract();
-//   chassis.pid_wait();
-
-//   chassis.pid_turn_set(-140_deg, TURN_SPEED);
-//   chassis.pid_wait();
-
-//   chassis.pid_drive_set(36_in, DRIVE_SPEED);
-//   chassis.pid_wait();
-
-//   stopAll(); //Stops all intake motors so no particle accelerator
-//   chassis.pid_turn_set(-180_deg, TURN_SPEED);
-//   chassis.pid_wait();
-
-//   chassis.pid_drive_set(-24_in, DRIVE_SPEED);
-//   chassis.pid_wait();
-
-//   outTop(); //Scores on top goal
-//   pros::delay(1500);
-//   stopAll();
-//   global::score.move_velocity(200); //Brief stop,
-//   pros::delay(500);
-//   outTop(); //Starts scoring some more
-//   pros::delay(1000);
-//   chassis.pid_drive_set(8_in, 127);
-//   chassis.pid_wait();
-//   global::descore.extend();
-//   chassis.pid_drive_set(-10_in, 127); //Rams descore into blocks, push them to control zone
-//   chassis.pid_wait();
-
-//   stopAll();
-// }
 
 void leftMid() {
   chassis.pid_drive_set(4_in, 110);
@@ -543,12 +502,4 @@ void leftTopOnly() {
 
 void rightTopOnly() {
 
-}
-
-void intakeOnly() {
-  pros::delay(1000);
-  intake();
-  chassis.pid_drive_set(36_in, 40);
-  chassis.pid_wait();
-  stopAll();
 }

@@ -254,6 +254,8 @@ void opcontrol() {
   bool tongue = true; //Tongue is up
   bool descore = false; //Descore is retracted
   bool intaked = false; //Intaking is active
+  int turnValue = master.get_analog(ANALOG_RIGHT_X);
+  chassis.opcontrol_curve_buttons_left_set(DIGITAL_L1, DIGITAL_A); 
 
 
 
@@ -280,8 +282,8 @@ void opcontrol() {
      }
     
 
-    // chassis.opcontrol_tank();  // Tank control
-    chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
+    chassis.opcontrol_tank();  // Tank control
+    // chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
     // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
@@ -291,23 +293,45 @@ void opcontrol() {
     //   global::descore.toggle();
     // }
     //cam
+    // if (master.get_digital_new_press(DIGITAL_RIGHT)) {
+    //   global::descore.toggle();
+    // }
+    global::descore.set_value(DIGITAL_UP);
+
     if (master.get_digital_new_press(DIGITAL_RIGHT)) {
-      global::descore.toggle();
-    }
-    if (master.get_digital_new_press(DIGITAL_DOWN)) {
       global::tongue.toggle();
     }
 
- 
+ //jayden code
+    if (master.get_digital(DIGITAL_R2)) { //Intake in
+      intake();
+    } else if (master.get_digital(DIGITAL_L2)) { //Intake out
+      reverseIntake();
+    } else if (master.get_digital(DIGITAL_X)) { //top button
+      outMid();
+    } else if (master.get_digital(DIGITAL_Y)) {
+      outTop();
+    } else if (master.get_digital(DIGITAL_B)) {
+      outLow();
+
+    } else {
+      if (!intaked) {
+        stopAll();
+      } else {
+        intake();
+      }
+    }
+
+    //cam code
     // if (master.get_digital(DIGITAL_R2)) { //Intake in
     //   intake();
     // } else if (master.get_digital(DIGITAL_L2)) { //Intake out
     //   reverseIntake();
     // } else if (master.get_digital(DIGITAL_X)) {
     //   outLow();
-    // } else if (master.get_digital(DIGITAL_Y)) {
-    //   outMid();
     // } else if (master.get_digital(DIGITAL_B)) {
+    //   outMid();
+    // } else if (master.get_digital(DIGITAL_Y)) {
     //   outTop();
     // } else {
     //   if (!intaked) {
@@ -317,35 +341,17 @@ void opcontrol() {
     //   }
     // }
 
-    //cam code
-    if (master.get_digital(DIGITAL_R2)) { //Intake in
-      intake();
-    } else if (master.get_digital(DIGITAL_L2)) { //Intake out
-      reverseIntake();
-    } else if (master.get_digital(DIGITAL_X)) {
-      outLow();
-    } else if (master.get_digital(DIGITAL_B)) {
-      outMid();
-    } else if (master.get_digital(DIGITAL_Y)) {
-      outTop();
-    } else {
-      if (!intaked) {
-        stopAll();
-      } else {
-        intake();
-      }
-    }
-
     if (master.get_digital_new_press(DIGITAL_R1)) {
       intaked = true;
       intake();
-    } else if (master.get_digital_new_press(DIGITAL_L1)) {
-      intaked = false;
-      stopAll();
-    }
+    // } else if (master.get_digital_new_press(DIGITAL_L1)) {
+    //   intaked = false;
+    //   stopAll();
+    // }
  
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
-  } 
+    } 
+  }
 }
 
 //run this before pros m
