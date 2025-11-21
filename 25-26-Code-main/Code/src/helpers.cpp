@@ -3,19 +3,13 @@
 // description of the function
 //}
 
-// void intake();
-// void outTop();
-// void outMid();
-// void outLow();
-// void stopAll();
-
-// void tongueOut();
-// void tongueIn();
-
-// void descoreExtend();
-// void descoreRetract();
-
 bool hoodie = false;
+
+void quickBack() {
+    global::intake.move_velocity(600);
+    global::topRoller.move_velocity(-200);
+    pros::delay(140);
+}
 
 void intake() {
     global::intake.move_velocity(-600);

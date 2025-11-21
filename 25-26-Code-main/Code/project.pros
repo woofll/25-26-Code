@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "subaru",
+    "project_name": "TEST",
     "target": "v5",
     "templates": {
       "EZ-Template": {
@@ -424,9 +424,9 @@
       }
     },
     "upload_options": {
-      "description": "super cool code",
-      "icon": "power",
-      "slot": 1
+      "description": "izutsumi super fan",
+      "icon": "X",
+      "slot": 8
     },
     "use_early_access": false
   }

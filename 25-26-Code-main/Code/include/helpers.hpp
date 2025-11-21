@@ -8,6 +8,8 @@ void outMid();
 void outLow();
 void stopAll();
 
+void quickBack();
+
 void matchLoad();
 
 void tongueOut();

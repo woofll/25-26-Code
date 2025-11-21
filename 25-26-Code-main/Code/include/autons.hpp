@@ -23,4 +23,3 @@ void leftMid();
 void rightMid();
 void leftTopOnly();
 void rightTopOnly();
-void intakeOnly();

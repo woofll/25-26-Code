@@ -9,8 +9,12 @@ extern pros::Motor intake;
 extern pros::Motor topRoller;
 extern pros::Motor hoodRoller;
 
+extern pros::Optical color;
+
 extern pros::adi::Pneumatics tongue;
 extern pros::adi::Pneumatics descore;
 extern pros::adi::Pneumatics hood;
+
+extern pros::Motor testMotor1;
 
 }
