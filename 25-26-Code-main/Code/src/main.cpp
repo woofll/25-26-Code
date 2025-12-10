@@ -20,6 +20,8 @@ ez::Drive chassis(
 
   bool teamBlue = false;
   bool colorStatus = true;
+  int opticalDistance = global::color.get_proximity();
+  int activeColor = global::color.get_hue(); 
 
 // Uncomment the trackers  you're using here!
 // ez::tracking_wheel horiz_tracker(16, 2, 5.25);  // This tracking wheel is perpendicular to the drive wheels
@@ -235,13 +237,12 @@ void ez_template_extras() {
   }
 }
 
-void scoreColorSort() {
-  int opticalDistance = global::color.get_proximity();
-  int activeColor = global::color.get_hue();    
+void scoreColorSort() {  
   bool top = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
   bool mid = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
 
 
+if (colorStatus == true){ // If color sorting is active.
   if (opticalDistance < 150 && top == true && mid == false) { // If we are detecting a ball and scoring top
     if (teamBlue == true){ // And If we are blue
       if (activeColor > 0 && activeColor < 50){ // We detect red
@@ -258,19 +259,20 @@ void scoreColorSort() {
       if (teamBlue == true){ // And If we are blue
         if (activeColor > 0 && activeColor < 50){ // We detect red
         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
+        global::hood.set_value(true);
         }
 
       } else if (teamBlue == false) { // And If we are red
           if (activeColor > 120 && activeColor < 250){ // We detect blue
         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
+        global::hood.set_value(true);
       }
     }
-  } else {}
+  } else {} // If neither, do nothing
+ }
 }
 
 void intakeColorSort() {
-  int opticalDistance = global::color.get_proximity();
-  int activeColor = global::color.get_hue(); 
   if (opticalDistance < 150) { // If we are detecting a ball 
     if (teamBlue == true){ // And If we are blue
       if (activeColor > 0 && activeColor < 50){ // We detect red
@@ -288,8 +290,6 @@ void intakeColorSort() {
 }
 
 void TESTColorSort() {
-  int opticalDistance = global::color.get_proximity();
-  int activeColor = global::color.get_hue(); 
   if (opticalDistance > 150) { // If we are detecting a ball and scoring top
     if (teamBlue == true){ // And If we are blue
       if (activeColor > 0 && activeColor < 40){ // We detect red
@@ -365,13 +365,17 @@ void opcontrol() {
 
 
 
-    global::topDescore.set_value(DIGITAL_L2); // L2 Hold = Descore down when held
-
-    if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
-      global::tongue.toggle();
+    // global::topDescore.set_value(DIGITAL_L2); // L2 Hold = Descore down when held
+    
+    if (master.get_digital_new_press(DIGITAL_L2)) { // DOWN Toggle = Match Loader
+      global::topDescore.toggle();
     }
     if (master.get_digital_new_press(DIGITAL_L1)) { // L1 Toggle = Middle De-score
       global::midDescore.toggle();
+    }
+
+    if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
+      global::tongue.toggle();
     }
 
     if (master.get_digital_new_press(DIGITAL_UP)) { // UP Toggle = Activates/Deactivates Color Sorting Code
