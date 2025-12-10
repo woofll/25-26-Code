@@ -8,8 +8,6 @@ void outMid();
 void outLow();
 void stopAll();
 
-void quickBack();
-
 void matchLoad();
 
 void tongueOut();
@@ -17,3 +15,5 @@ void tongueIn();
 
 void descoreExtend();
 void descoreRetract();
+
+void doublePark();

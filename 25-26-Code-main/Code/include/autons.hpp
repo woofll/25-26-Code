@@ -12,12 +12,17 @@ void combining_movements();
 void odom_drive_example();
 void odom_pure_pursuit_example();
 void odom_pure_pursuit_wait_until_example();
+void measure_offsets();
+
+
 
 void driveFwd24();
 void driveBack24();
 void turnCW90();
 void turnCCW90();
 void matchLoading();
+void odomTEST();
+
 
 void leftMid();
 void rightMid();

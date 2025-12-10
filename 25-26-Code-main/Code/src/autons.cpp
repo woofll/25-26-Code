@@ -15,13 +15,13 @@ const int SWING_SPEED = 110;
 ///
 void default_constants() {
   // P, I, D, and Start I
-  // chassis.pid_drive_constants_set(10.0, 0.0, 80.0);  
-  chassis.pid_drive_constants_forward_set(9.0, 0.0, 100.0);
-  chassis.pid_drive_constants_backward_set(18.0, 0.0, 80.0);       // Fwd/rev constants, used for odom and non odom motions
-  chassis.pid_heading_constants_set(11.0, 0.0, 20.0);        // Holds the robot straight while going forward without odom
+  // chassis.pid_drive_constants_set(20.0, 0.0, 100.0);  
+  chassis.pid_drive_constants_forward_set(13, 0.0, 70.0);
+  chassis.pid_drive_constants_backward_set(12, 0.0, 100.0);       // Fwd/rev constants, used for odom and non odom motions
+  chassis.pid_heading_constants_set(8, 0.0, 30.0);        // Holds the robot straight while going forward without odom
   chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);     // Turn in place constants
   chassis.pid_swing_constants_set(6.0, 0.0, 65.0);           // Swing constants
-  chassis.pid_odom_angular_constants_set(6.5, 0.0, 52.5);    // Angular control for odom motions
+  chassis.pid_odom_angular_constants_set(6.5, 0.0, 53.0);    // Angular control for odom motions
   chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5);  // Angular control for boomerang motions
 
   // chassis.pid_drive_constants_set(20.0, 0.0, 100.0);         // Fwd/rev constants, used for odom and non odom motions
@@ -181,26 +181,6 @@ void motion_chaining() {
   chassis.pid_wait();
 }
 
-///
-// Auto that tests everything 
-///
-void combining_movements() {
-  chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(45_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_swing_set(ez::RIGHT_SWING, -45_deg, SWING_SPEED, 45);
-  chassis.pid_wait();
-
-  chassis.pid_turn_set(0_deg, TURN_SPEED);
-  chassis.pid_wait();
-
-  chassis.pid_drive_set(-24_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
-}
-
 
 ///
 // Odom Drive PID
@@ -210,14 +190,17 @@ void odom_drive_example() {
   // You can replace pid_drive_set with pid_odom_set and your robot will
   // have better error correction.
 
-  chassis.pid_odom_set(24_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
+  // chassis.pid_odom_set(-24_in, 30, true);
+  // chassis.pid_wait();
+  // Drive forward to (0, 36) forward
+chassis.pid_odom_set({{0_in, -24_in}, fwd, 20});
+chassis.pid_wait();
 
-  chassis.pid_odom_set(-12_in, DRIVE_SPEED);
-  chassis.pid_wait();
+  // chassis.pid_odom_set(-12_in, DRIVE_SPEED);
+  // chassis.pid_wait();
 
-  chassis.pid_odom_set(-12_in, DRIVE_SPEED);
-  chassis.pid_wait();
+  // chassis.pid_odom_set(-12_in, DRIsVE_SPEED);
+  // chassis.pid_wait();
 }
 
 ///
@@ -316,10 +299,11 @@ void measure_offsets() {
 // . . .
 
 void driveFwd24(){
-  global::tongue.extend();
+  chassis.pid_drive_set(24_in, DRIVE_SPEED);
+  chassis.pid_wait();
 }
 void driveBack24(){
-  chassis.pid_drive_set(-25_in, DRIVE_SPEED);
+  chassis.pid_drive_set(-24_in, DRIVE_SPEED);
   chassis.pid_wait();
 }
 void turnCW90(){
@@ -331,175 +315,22 @@ void turnCCW90(){
   chassis.pid_wait();
 }
 
-void matchLoading() {
-  global::tongue.extend();
-  intake();
-  pros::delay(500);
-
-  chassis.pid_drive_set(10_in, 60);
-  chassis.pid_wait_quick_chain();
-
-  chassis.drive_set(-50, -50);
-  pros::delay(200);
-  chassis.drive_set(40, 40);
-  pros::delay(600);
-  chassis.drive_set(0, 0);
-  pros::delay(300);
-
-  chassis.drive_set(-50, -50);
-  pros::delay(200);
-  chassis.drive_set(40, 40);
-  global::topRoller.brake();
-  pros::delay(600);
-  chassis.drive_set(0, 0);
-  pros::delay(300);
-
-  chassis.pid_drive_set(-8_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(2_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  pros::delay(500);
-  stopAll();
-  global::tongue.retract();
-
-  // chassis.pid_drive_set(-3_in, 80);
-  // chassis.pid_wait_quick_chain();
-  // chassis.pid_drive_set(4_in, 60);
-  // chassis.pid_wait_quick_chain();
-
-  // chassis.pid_drive_set(-10_in, DRIVE_SPEED);
-  // chassis.pid_wait_quick_chain();
-  // chassis.pid_drive_set(2_in, DRIVE_SPEED);
-  // chassis.pid_wait_quick_chain();
-  // pros::delay(500);
-  // global::tongue.retract();
-
-
-}
-
-
-void leftMid() {
-  chassis.pid_drive_set(4_in, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(-24_deg, 100); // og 25deg
-  chassis.pid_wait_quick_chain();//
-  pros::delay(50);
+void odomTEST(){
   
-  intake();
-
-  chassis.pid_drive_set(10_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(19_in, 35, true, true); //og 55 speed
-
-  chassis.pid_wait_quick_chain();//
-  pros::delay(50);
-
-  chassis.pid_drive_set(-4_in, DRIVE_SPEED); // og 5in
-  stopAll();
-  chassis.pid_wait_quick_chain();//
-
-  pros::delay(50);
-  chassis.pid_turn_set(-130_deg, TURN_SPEED, true); // og 129deg
-  chassis.pid_wait_quick_chain();//
-  pros::delay(100);
-
-  chassis.pid_drive_set(-14_in, DRIVE_SPEED, true, true);
-  chassis.pid_wait_quick_chain();//
-
-  //Score Mid
-  global::intake.move_velocity(-600);
-  global::topRoller.move_velocity(150);
-  global::hoodRoller.move_velocity(-150);
-  global::hood.set_value(true);
-  // outMid();
-  pros::delay(1700);
-  stopAll();
-
-  chassis.pid_drive_set(49_in, DRIVE_SPEED);
-  global::tongue.extend();
-  pros::delay(1400);
-  chassis.pid_turn_set(180_deg, 80);
-  pros::delay(200);
-  intake();
-  chassis.pid_drive_set(14_in, 70); //og 8in
-  intake();
-  chassis.pid_wait_quick_chain();
-
-
-  // Back and in for match loading
-  matchLoad();
-  chassis.pid_drive_set(-27_in, 80, true, true);
-  chassis.pid_wait_quick_chain();
-
-  outTop();
-  global::tongue.retract();
-  pros::delay(3000);
-
-  }
-//************************************************************************************************************************ */
-void rightMid() {
-  chassis.pid_drive_set(4_in, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(24_deg, 100); // og 25deg
-  chassis.pid_wait_quick_chain();//
-  pros::delay(50);
-  
-  intake();
-
-  chassis.pid_drive_set(10_in, DRIVE_SPEED);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(19_in, 35, true, true); //og 55 speed
-
-  chassis.pid_wait_quick_chain();//
-  pros::delay(50);
-
-  chassis.pid_drive_set(-6.2_in, DRIVE_SPEED); // og 6.5
-  stopAll();
-  chassis.pid_wait_quick_chain();//
-
-  pros::delay(50);
-  chassis.pid_turn_set(-44_deg, TURN_SPEED, true); // og 129deg
-  chassis.pid_wait_quick_chain();//
-  pros::delay(50);
-
-  chassis.pid_drive_set(8_in, DRIVE_SPEED, true, true);
-  chassis.pid_wait_quick_chain();
-
-  // outLow();
-    global::intake.move_velocity(550);
-    global::topRoller.move_velocity(-200);
-  pros::delay(1850);
-  stopAll();
-
-  chassis.pid_drive_set(-14_in, DRIVE_SPEED);//29
-  chassis.pid_wait_quick_chain();
-  chassis.pid_turn_set(-60_deg, TURN_SPEED);
-  global::tongue.extend();
-  chassis.pid_drive_set(-32_in, DRIVE_SPEED);
-  pros::delay(1500);
-  chassis.pid_turn_set(180_deg, 95);
-  pros::delay(100);
-  intake();
-  chassis.pid_drive_set(22_in, 80); //og 8in
-  chassis.pid_wait_quick_chain();
-
-
-  // // Back and in for match loading
-  // matchLoad();
-  // pros::delay(50);
-  chassis.pid_drive_set(-25_in, 80, true);
-  chassis.pid_wait_quick_chain();
-
-  outTop();
-  global::tongue.retract();
-  outTop();
-  pros::delay(2000);
 }
-//************************************************************************************************************************************** */
-void leftTopOnly() {
+
+void leftMid(){
 
 }
 
-void rightTopOnly() {
+void rightMid(){
+
+}
+
+void leftTopOnly(){
+
+}
+
+void rightTopOnly(){
 
 }
