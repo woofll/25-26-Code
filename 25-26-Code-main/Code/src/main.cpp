@@ -15,13 +15,13 @@ ez::Drive chassis(
 
 
     12,      // IMU Port (4 = radio)
-    2.86,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!) //og 3.25 12/9/25 //og 2.86 12/10/25
-    400);   // Wheel RPM = cartridge * (motor gear / wheel gear)
+    2.86,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!) Actual wheels are 3.25
+    400);   // Wheel RPM = cartridge * (motor gear / wheel gear) Actual rpm is 360
 
   bool teamBlue = false;
   bool colorStatus = true;
-  int opticalDistance = global::color.get_proximity();
-  int activeColor = global::color.get_hue(); 
+  // int opticalDistance = global::color.get_proximity();
+  // int activeColor = global::color.get_hue(); 
 
   int startTime = 0;
   int scoreTime = 0;
@@ -242,41 +242,54 @@ void ez_template_extras() {
 }
 
 void scoreColorSort() {  
-  bool top = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
-  bool mid = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
+  bool mid = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
+  bool top = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
+  
+    int opticalDistance = global::color.get_proximity(); //Timing
+    int activeColor = global::color.get_hue();
+    int currentTime = pros::millis();
+    int scoreDuration = 300;
+  if (master.get_digital_new_press(DIGITAL_Y) || master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
+    pros::lcd::set_text(3, std::to_string((scoreTime)));
+    scoreTime = pros::millis();
+  }
 
-
-if (colorStatus == true){ // If color sorting is active.
-  if (opticalDistance < 150 && top == true && mid == false) { // If we are detecting a ball and scoring top
-    if (teamBlue == true){ // And If we are blue
-      if (activeColor > 0 && activeColor < 50){ // We detect red
-      global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
-      }
+if (currentTime - scoreTime >= scoreDuration) { //If after quickback, run color sort
+  if (colorStatus == true){ // If color sorting is active.
+    if (opticalDistance > 150 && master.get_digital(DIGITAL_Y)) { // If we are detecting a ball and scoring top
+      if (teamBlue == true){ // And If we are blue
+        if (activeColor > 0 && activeColor < 40){ // We detect red
+        global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
+        }
 
     } else if (teamBlue == false) { // And If we are red
         if (activeColor > 120 && activeColor < 250){ // We detect blue
-      global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
-      }
+        global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
+        }
     }
 /**/
-  } else if (opticalDistance < 150 && top == false && mid == true) { // If we are detecting a ball and scoring mid 
+ } else if (opticalDistance > 150 && master.get_digital(DIGITAL_B)) { // If we are detecting a ball and scoring mid 
       if (teamBlue == true){ // And If we are blue
-        if (activeColor > 0 && activeColor < 50){ // We detect red
+        if (activeColor > 0 && activeColor < 40){ // We detect red
         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
         global::hood.set_value(true);
         }
 
       } else if (teamBlue == false) { // And If we are red
-          if (activeColor > 120 && activeColor < 250){ // We detect blue
+        if (activeColor > 120 && activeColor < 250){ // We detect blue
         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
         global::hood.set_value(true);
       }
     }
-  } else {} // If neither, do nothing
- }
+  } else {} // If we don't see anything, do nothing
+ } else if (colorStatus == false) {} //If color sorting is inactive, do nothing
+} 
+
 }
 
 void intakeColorSort() {
+int opticalDistance = global::color.get_proximity();
+int activeColor = global::color.get_hue();
   if (opticalDistance < 150) { // If we are detecting a ball 
     if (teamBlue == true){ // And If we are blue
       if (activeColor > 0 && activeColor < 50){ // We detect red
@@ -294,6 +307,8 @@ void intakeColorSort() {
 }
 
 void TESTColorSort() {
+int opticalDistance = global::color.get_proximity(); //og wasn't here
+int activeColor = global::color.get_hue();
   if (opticalDistance > 150) { // If we are detecting a ball and scoring top
     if (teamBlue == true){ // And If we are blue
       if (activeColor > 0 && activeColor < 40){ // We detect red
@@ -372,9 +387,6 @@ void opcontrol() {
     int currentTime = pros::millis();
     int scoreDuration = 300;
     global::color.set_led_pwm(35);
-    if (chassis.odom_theta_get() == (360 || -360)) {
-      chassis.odom_theta_set(0);
-    }
 
     // pros::lcd::set_text (5, std::to_string(teamBlue));
     // pros::lcd::set_text(6, std::to_string(global::color.get_proximity()));
@@ -453,9 +465,9 @@ void opcontrol() {
       }
     }
 
-    if (master.get_digital_new_press(DIGITAL_Y) || master.get_digital_new_press(DIGITAL_B)) { // Y or B Press = Score with Color Sort
-      scoreColorSort();
-    }
+    // if (master.get_digital(DIGITAL_Y) || master.get_digital(DIGITAL_B)) { // Y or B Press = Score with Color Sort
+    //   scoreColorSort();
+    // }
 
 
     if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
@@ -463,10 +475,11 @@ void opcontrol() {
     } else if (master.get_digital(DIGITAL_R1)){// R1 Hold = Reverse Intake/Bottom Goal Score
       outLow();
     } else if (master.get_digital(DIGITAL_Y)){// Y Hold = Top Goal Score
-       if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) < scoreDuration){ 
+       if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
         outLow();
-      } else if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) >= scoreDuration) {
+      } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
         outTop();
+        scoreColorSort();
       }
     } else if (master.get_digital(DIGITAL_B)) {// B Hold = Middle Goal Score
        if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
