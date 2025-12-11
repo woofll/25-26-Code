@@ -15,7 +15,7 @@ ez::Drive chassis(
 
 
     12,      // IMU Port (4 = radio)
-    2.86,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!) //og 3.25 12/9/25
+    2.86,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!) //og 3.25 12/9/25 //og 2.86 12/10/25
     400);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
   bool teamBlue = false;
@@ -23,9 +23,12 @@ ez::Drive chassis(
   int opticalDistance = global::color.get_proximity();
   int activeColor = global::color.get_hue(); 
 
+  int startTime = 0;
+  int scoreTime = 0;
+
 // Uncomment the trackers  you're using here!
 // ez::tracking_wheel horiz_tracker(16, 2, 5.25);  // This tracking wheel is perpendicular to the drive wheels
-ez::tracking_wheel vert_tracker(-11, 2, 0.25);   // This tracking wheel is parallel to the drive wheels //og (11, 2, 5.5) 12/9/25
+ez::tracking_wheel vert_tracker(-11, 2, 5.5);   // This tracking wheel is parallel to the drive wheels //og (-11, 2, 5.5) 12/9/25
 
 
 /**S
@@ -168,6 +171,7 @@ void ez_screen_task() {
           ez::screen_print("x: " + util::to_string_with_precision(chassis.odom_x_get()) +
                                "\ny: " + util::to_string_with_precision(chassis.odom_y_get()) +
                                "\na: " + util::to_string_with_precision(chassis.odom_theta_get()),
+                      
                            1);  // Don't override the top Page line
       
           
@@ -213,8 +217,8 @@ void ez_template_extras() {
     //  When enabled:
     //  * use A and Y to increment / decrement the constants
     //  * use the arrow keys to navigate the constants
-    if (master.get_digital_new_press(DIGITAL_X))
-      // chassis.pid_tuner_toggle();
+    // if (master.get_digital_new_press(DIGITAL_X))
+    //   // chassis.pid_tuner_toggle();
 
 
     // Trigger the selected autonomous routine
@@ -304,6 +308,37 @@ void TESTColorSort() {
   }
 }
 
+// void timer() {
+//     int currentTime = pros::millis();
+//     int duration = 500; //0.5 seconds
+//     if (currentTime - startTime >= duration){
+//       pros::lcd::set_text(7, std::to_string((currentTime)));
+//       startTime = currentTime;
+//     }
+// }
+
+// void scoreTop() {
+  // int currentTime = pros::millis();
+  // int duration = 500;
+  // if (master.get_digital_new_press(DIGITAL_Y)) {
+  //   scoreTime = pros::millis();
+  // }
+  //}
+
+    
+  // while (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime >= duration)){
+  //   global::intake.move_velocity(-600);
+  //         pros::lcd::set_text(3, std::to_string((scoreTime)));
+  //       pros::lcd::set_text(4, std::to_string((currentTime)));
+  //   scoreTime = currentTime;
+  // }
+
+  // global::intake.move_velocity(600);
+
+
+
+
+
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -327,16 +362,41 @@ void opcontrol() {
   bool tongue = true; //Tongue is up
   bool descore = false; //Descore is retracted
   bool intaked = false; //Intaking is active
+  bool y = false;
 
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
     int activeColor = global::color.get_hue();
     int opticalDistance = global::color.get_proximity();
+    int currentTime = pros::millis();
+    int scoreDuration = 300;
     global::color.set_led_pwm(35);
+    if (chassis.odom_theta_get() == (360 || -360)) {
+      chassis.odom_theta_set(0);
+    }
+
     // pros::lcd::set_text (5, std::to_string(teamBlue));
     // pros::lcd::set_text(6, std::to_string(global::color.get_proximity()));
     // pros::lcd::set_text(7, std::to_string(global::color.get_hue()));
+ 
+      // pros::lcd::set_text(2, std::to_string(scoreDuration));
+      // pros::lcd::set_text(3, std::to_string((scoreTime)));
+      // pros::lcd::set_text(4, std::to_string((currentTime)));
+      // pros::lcd::set_text(5, std::to_string(master.get_digital(DIGITAL_Y)));
+      // pros::lcd::set_text(6, std::to_string(y));
+      // pros::lcd::set_text(7, std::to_string(pros::millis()));
+      pros::lcd::set_text(5, std::to_string(colorStatus));
+
+  if (master.get_digital_new_press(DIGITAL_Y) || master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
+    pros::lcd::set_text(3, std::to_string((scoreTime)));
+    scoreTime = pros::millis();
+      if (!y) {
+        y = true;
+      } else if (y) {
+        y = false;
+      }
+  }
 
     bool top = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
     bool mid = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
@@ -354,6 +414,7 @@ void opcontrol() {
       if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_DOWN)){
         // measure_offsets();
         odom_drive_example();
+        // drive_and_turn();
       }
      }
     
@@ -362,7 +423,6 @@ void opcontrol() {
     // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
-
 
 
     // global::topDescore.set_value(DIGITAL_L2); // L2 Hold = Descore down when held
@@ -374,9 +434,9 @@ void opcontrol() {
       global::midDescore.toggle();
     }
 
-    if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
-      global::tongue.toggle();
-    }
+    // if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
+    //   global::tongue.toggle();
+    // }
 
     if (master.get_digital_new_press(DIGITAL_UP)) { // UP Toggle = Activates/Deactivates Color Sorting Code
       if (colorStatus) {
@@ -403,9 +463,17 @@ void opcontrol() {
     } else if (master.get_digital(DIGITAL_R1)){// R1 Hold = Reverse Intake/Bottom Goal Score
       outLow();
     } else if (master.get_digital(DIGITAL_Y)){// Y Hold = Top Goal Score
-      outTop();
+       if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) < scoreDuration){ 
+        outLow();
+      } else if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) >= scoreDuration) {
+        outTop();
+      }
     } else if (master.get_digital(DIGITAL_B)) {// B Hold = Middle Goal Score
-      outMid();
+       if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
+        outLow();
+      } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
+        outMid();
+      }
     } else { // Stop all motors if nothing pressed
       stopAll();
     }

@@ -13,6 +13,7 @@ static bool qbActive = false;
 void intake() {
     global::intake.move_velocity(600);
     global::topRoller.move_velocity(200);
+    global::hoodRoller.brake();
 }
 void reverseIntake() {
     global::intake.move_velocity(-600);

@@ -16,9 +16,9 @@ const int SWING_SPEED = 110;
 void default_constants() {
   // P, I, D, and Start I
   // chassis.pid_drive_constants_set(20.0, 0.0, 100.0);  
-  chassis.pid_drive_constants_forward_set(13, 0.0, 70.0);
+  chassis.pid_drive_constants_forward_set(17, 0.0, 100.0); //og (14, 0, 100);
   chassis.pid_drive_constants_backward_set(12, 0.0, 100.0);       // Fwd/rev constants, used for odom and non odom motions
-  chassis.pid_heading_constants_set(8, 0.0, 30.0);        // Holds the robot straight while going forward without odom
+  chassis.pid_heading_constants_set(8, 0.0, 22.0);        // Holds the robot straight while going forward without odom
   chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);     // Turn in place constants
   chassis.pid_swing_constants_set(6.0, 0.0, 65.0);           // Swing constants
   chassis.pid_odom_angular_constants_set(6.5, 0.0, 53.0);    // Angular control for odom motions
@@ -34,7 +34,7 @@ void default_constants() {
   // Exit conditions
   chassis.pid_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
   chassis.pid_swing_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
-  chassis.pid_drive_exit_condition_set(90_ms, 1_in, 250_ms, 3_in, 500_ms, 500_ms);
+  chassis.pid_drive_exit_condition_set(90_ms, 0.9_in, 250_ms, 3_in, 500_ms, 500_ms);
   chassis.pid_odom_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 750_ms);
   chassis.pid_odom_drive_exit_condition_set(90_ms, 1_in, 250_ms, 3_in, 500_ms, 750_ms);
   chassis.pid_turn_chain_constant_set(3_deg);
@@ -97,13 +97,13 @@ void drive_and_turn() {
   chassis.pid_drive_set(24_in, DRIVE_SPEED);
   chassis.pid_wait_quick_chain();
 
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_turn_set(180_deg, TURN_SPEED);
   chassis.pid_wait_quick_chain();
 
   chassis.pid_drive_set(12_in, DRIVE_SPEED);
   chassis.pid_wait();
 
-  chassis.pid_turn_set(180_deg, TURN_SPEED);
+  chassis.pid_turn_set(-90_deg, TURN_SPEED);
   chassis.pid_wait_quick();
 }
 
@@ -189,12 +189,17 @@ void odom_drive_example() {
   // This works the same as pid_drive_set, but it uses odom instead!
   // You can replace pid_drive_set with pid_odom_set and your robot will
   // have better error correction.
-
+ 
   // chassis.pid_odom_set(-24_in, 30, true);
   // chassis.pid_wait();
   // Drive forward to (0, 36) forward
-chassis.pid_odom_set({{0_in, -24_in}, fwd, 20});
+// chassis.pid_odom_set({{0_in, 16_in}, fwd, 20});
+// chassis.pid_wait();
+chassis.pid_odom_set({{0_in, 24_in}, fwd, 80});
 chassis.pid_wait();
+
+// chassis.pid_turn_set({8, 16}, fwd, 80);
+// chassis.pid_wait();
 
   // chassis.pid_odom_set(-12_in, DRIVE_SPEED);
   // chassis.pid_wait();
