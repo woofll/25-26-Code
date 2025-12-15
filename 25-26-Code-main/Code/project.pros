@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "Subaru",
+    "project_name": "MATCH FINALS",
     "target": "v5",
     "templates": {
       "EZ-Template": {
@@ -425,8 +425,8 @@
     },
     "upload_options": {
       "description": "Fragrant Flower",
-      "icon": "X",
-      "slot": 1
+      "icon": "alien",
+      "slot": 2
     },
     "use_early_access": false
   }

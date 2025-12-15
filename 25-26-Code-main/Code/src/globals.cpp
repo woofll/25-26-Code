@@ -13,8 +13,8 @@ pros::Distance distance(14);
 // pros::Rotation odom(11);
 
 pros::adi::Pneumatics tongue('H', false); //Starts retracted
-pros::adi::Pneumatics topDescore('B', false);
-pros::adi::Pneumatics midDescore('D', false);
+pros::adi::Pneumatics topDescore('D', false); //Starts extended (up)
+pros::adi::Pneumatics midDescore('B', false);
 pros::adi::Pneumatics hood('A', false); //Starts retracted
 
 

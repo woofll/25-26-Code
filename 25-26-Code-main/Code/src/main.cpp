@@ -18,8 +18,10 @@ ez::Drive chassis(
     2.86,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!) Actual wheels are 3.25
     400);   // Wheel RPM = cartridge * (motor gear / wheel gear) Actual rpm is 360
 
-  bool teamBlue = false;
+  // extern bool teamBlue = false;
   bool colorStatus = true;
+  bool dP = false;
+  bool teamBlue;
   // int opticalDistance = global::color.get_proximity();
   // int activeColor = global::color.get_hue(); 
 
@@ -80,9 +82,9 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      // Auton{"", leftMid},
-      // Auton{"", rightMid},
-      // Auton{"", leftTopOnly},
+      Auton{"LEFT SIDEEEEEE", blueLeftTopOnly},
+      Auton{"RIGHT SIDEEEEEEE", blueRightTopOnly},
+      Auton{"sssssssskils", skills},
       // Auton{"", rightTopOnly},
 
   });
@@ -242,30 +244,33 @@ void ez_template_extras() {
 }
 
 void scoreColorSort() {  
-  bool mid = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
-  bool top = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
   
     int opticalDistance = global::color.get_proximity(); //Timing
     int activeColor = global::color.get_hue();
     int currentTime = pros::millis();
-    int scoreDuration = 300;
-  if (master.get_digital_new_press(DIGITAL_Y) || master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
+    int scoreDuration = 150;
+  if (master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
     pros::lcd::set_text(3, std::to_string((scoreTime)));
     scoreTime = pros::millis();
   }
 
-if (currentTime - scoreTime >= scoreDuration) { //If after quickback, run color sort
   if (colorStatus == true){ // If color sorting is active.
     if (opticalDistance > 150 && master.get_digital(DIGITAL_Y)) { // If we are detecting a ball and scoring top
       if (teamBlue == true){ // And If we are blue
         if (activeColor > 0 && activeColor < 40){ // We detect red
         global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
-        }
+        } 
+        //   else {
+        //    outTop();
+        // }
 
     } else if (teamBlue == false) { // And If we are red
         if (activeColor > 120 && activeColor < 250){ // We detect blue
         global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
         }
+       //   else {
+        //    outTop();
+        // }
     }
 /**/
  } else if (opticalDistance > 150 && master.get_digital(DIGITAL_B)) { // If we are detecting a ball and scoring mid 
@@ -274,16 +279,24 @@ if (currentTime - scoreTime >= scoreDuration) { //If after quickback, run color 
         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
         global::hood.set_value(true);
         }
+          //  if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
+          //   global::hoodRoller.move_velocity(-600);
+          // } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
+          //     outMid();
+          // }
 
       } else if (teamBlue == false) { // And If we are red
         if (activeColor > 120 && activeColor < 250){ // We detect blue
         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
         global::hood.set_value(true);
       }
+      //   else {
+        //    outMid();
+        // }
     }
   } else {} // If we don't see anything, do nothing
  } else if (colorStatus == false) {} //If color sorting is inactive, do nothing
-} 
+
 
 }
 
@@ -309,7 +322,7 @@ int activeColor = global::color.get_hue();
 void TESTColorSort() {
 int opticalDistance = global::color.get_proximity(); //og wasn't here
 int activeColor = global::color.get_hue();
-  if (opticalDistance > 150) { // If we are detecting a ball and scoring top
+  if (opticalDistance > 150) { //  we are detecting a ball and scoring top
     if (teamBlue == true){ // And If we are blue
       if (activeColor > 0 && activeColor < 40){ // We detect red
         global::testMotor1.move_velocity(-200); //Reversal; Balls shoot out mid
@@ -332,27 +345,6 @@ int activeColor = global::color.get_hue();
 //     }
 // }
 
-// void scoreTop() {
-  // int currentTime = pros::millis();
-  // int duration = 500;
-  // if (master.get_digital_new_press(DIGITAL_Y)) {
-  //   scoreTime = pros::millis();
-  // }
-  //}
-
-    
-  // while (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime >= duration)){
-  //   global::intake.move_velocity(-600);
-  //         pros::lcd::set_text(3, std::to_string((scoreTime)));
-  //       pros::lcd::set_text(4, std::to_string((currentTime)));
-  //   scoreTime = currentTime;
-  // }
-
-  // global::intake.move_velocity(600);
-
-
-
-
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -372,6 +364,7 @@ int activeColor = global::color.get_hue();
 void opcontrol() { 
   // This is preference to what you like to drive on
   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
+  // chassis.odom_enable(false);
 
   // variable start
   bool tongue = true; //Tongue is up
@@ -379,18 +372,20 @@ void opcontrol() {
   bool intaked = false; //Intaking is active
   bool y = false;
 
+  teamBlue = true;
+
   while (true) {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
     int activeColor = global::color.get_hue();
     int opticalDistance = global::color.get_proximity();
     int currentTime = pros::millis();
-    int scoreDuration = 300;
+    int scoreDuration = 150;
     global::color.set_led_pwm(35);
-
-    // pros::lcd::set_text (5, std::to_string(teamBlue));
-    // pros::lcd::set_text(6, std::to_string(global::color.get_proximity()));
-    // pros::lcd::set_text(7, std::to_string(global::color.get_hue()));
+teamBlue = true;
+    pros::lcd::set_text (4, std::to_string(teamBlue));
+    pros::lcd::set_text(6, std::to_string(global::color.get_proximity()));
+    pros::lcd::set_text(7, std::to_string(global::color.get_hue()));
  
       // pros::lcd::set_text(2, std::to_string(scoreDuration));
       // pros::lcd::set_text(3, std::to_string((scoreTime)));
@@ -400,7 +395,7 @@ void opcontrol() {
       // pros::lcd::set_text(7, std::to_string(pros::millis()));
       pros::lcd::set_text(5, std::to_string(colorStatus));
 
-  if (master.get_digital_new_press(DIGITAL_Y) || master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
+  if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
     pros::lcd::set_text(3, std::to_string((scoreTime)));
     scoreTime = pros::millis();
       if (!y) {
@@ -415,17 +410,19 @@ void opcontrol() {
 
     if (!pros::competition::is_connected()){
       if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_LEFT)) {
-        turnCW90();
+        // turnCW90();
+        blueLeftTopOnly();
       }   
       if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_RIGHT)){
-        turnCCW90();
+        skills();
       }
       if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_UP)){
-        driveFwd24();
+        // driveFwd24();
+        blueRightTopOnly();
       }
       if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_DOWN)){
         // measure_offsets();
-        odom_drive_example();
+        // odom_drive_example();
         // drive_and_turn();
       }
      }
@@ -436,37 +433,43 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
-
-    // global::topDescore.set_value(DIGITAL_L2); // L2 Hold = Descore down when held
     
-    if (master.get_digital_new_press(DIGITAL_L2)) { // DOWN Toggle = Match Loader
+    if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
       global::topDescore.toggle();
     }
     if (master.get_digital_new_press(DIGITAL_L1)) { // L1 Toggle = Middle De-score
       global::midDescore.toggle();
     }
-
-    // if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
-    //   global::tongue.toggle();
+    if (master.get_digital_new_press(DIGITAL_L2)) { // DOWN Toggle = Match Loader
+      global::tongue.toggle();
+    }
+    // if (master.get_digital_new_press(DIGITAL_UP)) { // UP Toggle = Activates/Deactivates Color Sorting Code and Double Park Mech
+    //   if (colorStatus) {
+    //     master.rumble("..");
+    //     colorStatus = false;
+    //     // dP = false;
+    //   } else if (!colorStatus) {
+    //     master.rumble("-");
+    //     colorStatus = true;
+    //     // dP = true;
+    //   }
     // }
 
-    if (master.get_digital_new_press(DIGITAL_UP)) { // UP Toggle = Activates/Deactivates Color Sorting Code
-      if (colorStatus) {
-        colorStatus = false;
-      } else if (!colorStatus) {
-        colorStatus = true;
-      }
-    }
 
-    if (master.get_digital_new_press(DIGITAL_LEFT)) { // LEFT Macro = Starts Double Park
-      doublePark();
-      if (master.get_digital(DIGITAL_LEFT)) {
-        stopAll();
-      }
-    }
-
-    // if (master.get_digital(DIGITAL_Y) || master.get_digital(DIGITAL_B)) { // Y or B Press = Score with Color Sort
-    //   scoreColorSort();
+    // if (master.get_digital_new_press(DIGITAL_LEFT)) { // LEFT Macro = Starts Double Park
+    //   dP = true;
+    //   if (dP) {
+    //     while (global::distance.get() > 50){
+    //       global::intake.move_velocity(-300);
+    //       global::topRoller.move_velocity(-200);
+    //       if (master.get_digital_new_press(DIGITAL_LEFT)){
+    //         dP = false;
+    //     }
+    //    }
+    //   global::topRoller.brake();
+    //   global::intake.move_velocity(-600);
+    //   pros::delay(95);
+    //   global::intake.brake();
     // }
 
 
@@ -475,15 +478,10 @@ void opcontrol() {
     } else if (master.get_digital(DIGITAL_R1)){// R1 Hold = Reverse Intake/Bottom Goal Score
       outLow();
     } else if (master.get_digital(DIGITAL_Y)){// Y Hold = Top Goal Score
-       if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
-        outLow();
-      } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
-        outTop();
-        scoreColorSort();
-      }
+      outTop();
     } else if (master.get_digital(DIGITAL_B)) {// B Hold = Middle Goal Score
        if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
-        outLow();
+        global::hoodRoller.move_velocity(600);
       } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
         outMid();
       }
@@ -496,6 +494,7 @@ void opcontrol() {
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
     } 
   }
+
 
 /******************************************************************************************************************************** */
   // void opcontrol() { //TEST OP CONTROL

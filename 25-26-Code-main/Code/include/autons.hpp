@@ -21,10 +21,10 @@ void driveBack24();
 void turnCW90();
 void turnCCW90();
 void matchLoading();
-void odomTEST();
+void skills();
 
+void blueLeftTopOnly();
+void blueRightTopOnly();
 
-void leftMid();
-void rightMid();
-void leftTopOnly();
-void rightTopOnly();
+void redLeftTopOnly();
+void redRightTopOnly();

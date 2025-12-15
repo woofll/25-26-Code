@@ -9,16 +9,16 @@
 const int DRIVE_SPEED = 110;
 const int TURN_SPEED = 90;
 const int SWING_SPEED = 110;
-
+// bool teamBlue = false;
 ///
 // Constants (Use if PID)
 ///
 void default_constants() {
   // P, I, D, and Start I
-  // chassis.pid_drive_constants_set(20.0, 0.0, 100.0);  
-  chassis.pid_drive_constants_forward_set(17, 0.0, 100.0); //og (14, 0, 100);
-  chassis.pid_drive_constants_backward_set(12, 0.0, 100.0);       // Fwd/rev constants, used for odom and non odom motions
-  chassis.pid_heading_constants_set(8, 0.0, 22.0);        // Holds the robot straight while going forward without odom
+  // chassis.pid_drive_constants_set(10.0, 0.0, 100.0);  
+  chassis.pid_drive_constants_forward_set(14, 0.0, 100.0); //og (14, 0, 100);
+  chassis.pid_drive_constants_backward_set(14, 0.0, 100.0);       // Fwd/rev constants, used for odom and non odom motions
+  chassis.pid_heading_constants_set(8, 0.0, 20.0);        // Holds the robot straight while going forward without odom
   chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);     // Turn in place constants
   chassis.pid_swing_constants_set(6.0, 0.0, 65.0);           // Swing constants
   chassis.pid_odom_angular_constants_set(6.5, 0.0, 53.0);    // Angular control for odom motions
@@ -319,9 +319,117 @@ void turnCCW90(){
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
   chassis.pid_wait();
 }
+void skills(){
+  // chassis.odom_enable(true);
+  // chassis.odom_xyt_set(-14, -48, -90);
+  // pros::delay(100);
+    
+  // chassis.pid_odom_set({{-46, -48}, fwd, DRIVE_SPEED});
+  // chassis.pid_wait();
 
-void odomTEST(){
+  chassis.pid_drive_set(31.2_in, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(-90_deg, TURN_SPEED);
+  chassis.pid_wait();
+  global::tongue.toggle();
+  pros::delay(500);
+
+  chassis.pid_drive_set(20_in, 43);
+  intake();
+  chassis.pid_wait();
+  pros::delay(100);
+  chassis.pid_drive_set(-4, 45);
+  chassis.pid_wait();
+  chassis.pid_drive_set(6, 45);
+  chassis.pid_wait();
+  pros::delay(1500);
+  stopAll();
+
+  chassis.pid_drive_set(-12, DRIVE_SPEED);
+  chassis.pid_wait();
+  global::tongue.toggle();
+  chassis.pid_turn_set(0, 70, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(20, 75, true); 
+  chassis.pid_wait();
+  pros::delay(500);
+  chassis.pid_drive_set(-3, 80, true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(82, DRIVE_SPEED, true);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(180, 80, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(13, 80);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-20, 90);
+  chassis.pid_wait();
+  outTop();
+  pros::delay(2000);
+  global::tongue.toggle();
+  stopAll();
+  outLow();
+  pros::delay(1000);
+  stopAll();
+  intake();
+  chassis.pid_drive_set(6, DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-9, DRIVE_SPEED);
+  chassis.pid_wait();
+  outTop();
+  pros::delay(1000);
+  stopAll();
+  chassis.pid_turn_set(90, TURN_SPEED);
+  chassis.pid_wait();
+  pros::delay(100);
+  chassis.pid_drive_set(26, 90, true);
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(16, 45, true);
+  intake();
+  pros::delay(1000);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-4, 80, true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90, 70, true);
+  chassis.pid_wait();
+  chassis.pid_drive_set(6, 45);
+  chassis.pid_wait();
+  pros::delay(3000);
+  chassis.pid_drive_set(-36, 60, true);
+  chassis.pid_wait();
+  outTop();
+  pros::delay(1600);
+  stopAll();
+
+  chassis.pid_drive_set(16, DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(16, DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_turn_set(90, TURN_SPEED);
+  chassis.pid_wait();
+  global::tongue.toggle();
+  chassis.pid_drive_set(20, 75);
+  chassis.pid_wait();
+  chassis.pid_drive_set(-3, DRIVE_SPEED);
+  chassis.pid_wait();
+  chassis.pid_turn_set(180, TURN_SPEED);
+  chassis.pid_wait();
+
+  outTop();
+  chassis.pid_drive_set(20, 127);
+  chassis.pid_wait();
+
+
+
   
+
 }
 
 void leftMid(){
@@ -332,10 +440,159 @@ void rightMid(){
 
 }
 
-void leftTopOnly(){
+void blueLeftTopOnly(){
+  chassis.pid_drive_set(9, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(-45, TURN_SPEED);
+  chassis.pid_wait();
+
+  intake();
+  chassis.pid_drive_set(6, 75);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(7, 20);
+  chassis.pid_wait_quick_chain();
+  global::tongue.toggle();
+  chassis.pid_drive_set(5, 20);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(8, 40);
+  chassis.pid_wait_quick_chain();
+  global::tongue.toggle();
+  stopAll();
+  
+  // chassis.pid_drive_set(5, 90);
+  // chassis.pid_wait_quick_chain();
+  // global::tongue.toggle();
+  // intake();
+  // chassis.pid_drive_set(5, 30);
+  // chassis.pid_wait();
+
+  chassis.pid_drive_set(-6, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(-135, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(34, 88);
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set(-178, 45);
+  chassis.pid_wait_quick();
+  global::tongue.toggle();
+  pros::delay(200);
+
+  chassis.pid_drive_set(-1, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(11, 85);
+  chassis.pid_wait_quick_chain();
+  intake();
+  chassis.pid_drive_set(12, 35);
+  chassis.pid_wait_quick_chain();
+
+  chassis.drive_set(50, 50);
+  pros::delay(160);
+  chassis.pid_wait();
+
+  stopAll();
+  global::hoodRoller.brake();
+  global::intake.move_velocity(500);
+  chassis.pid_drive_set(-6, 90, true);
+  chassis.pid_wait();
+  chassis.pid_turn_set(-185, TURN_SPEED);
+  chassis.pid_wait();
+ chassis.pid_drive_set(-28, 90, true);
+  chassis.pid_wait();
+  // outLow();
+  global::hood.toggle();
+  global::topRoller.move_velocity(200);
+  global::hoodRoller.move_velocity(-200);
+  global::intake.move_velocity(-600);
+  pros::delay(350);
+  stopAll();
+  outTop();
+  pros::delay(2700);
+  stopAll();
+  chassis.pid_drive_set(8, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-10, DRIVE_SPEED);
+  chassis.pid_wait();
+
 
 }
 
-void rightTopOnly(){
+void blueRightTopOnly(){
+   chassis.pid_drive_set(9, DRIVE_SPEED);
+  chassis.pid_wait();
+
+  chassis.pid_turn_set(45, TURN_SPEED);
+  chassis.pid_wait();
+
+  intake();
+  chassis.pid_drive_set(6, 75);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(7, 20);
+  chassis.pid_wait_quick_chain();
+  global::tongue.toggle();
+  chassis.pid_drive_set(5, 20);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(8, 40);
+  chassis.pid_wait_quick_chain();
+  global::tongue.toggle();
+  stopAll();
+  
+  // chassis.pid_drive_set(5, 90);
+  // chassis.pid_wait_quick_chain();
+  // global::tongue.toggle();
+  // intake();
+  // chassis.pid_drive_set(5, 30);
+  // chassis.pid_wait();
+
+  chassis.pid_drive_set(-6, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(135, TURN_SPEED);
+  chassis.pid_wait();
+  chassis.pid_drive_set(33, 84);
+  chassis.pid_wait_quick();
+  chassis.pid_turn_set(180, 45);
+  chassis.pid_wait_quick();
+  global::tongue.toggle();
+  pros::delay(200);
+
+  chassis.pid_drive_set(-1, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(11, 85);
+  chassis.pid_wait_quick_chain();
+  intake();
+  chassis.pid_drive_set(12, 35);
+  chassis.pid_wait_quick_chain();
+
+  chassis.drive_set(50, 50);
+  pros::delay(160);
+  chassis.pid_wait();
+
+  stopAll();
+  global::hoodRoller.brake();
+  global::intake.move_velocity(500);
+  chassis.pid_drive_set(-32, 90, true);
+  chassis.pid_wait();
+  // outLow();
+  global::hood.toggle();
+  global::topRoller.move_velocity(200);
+  global::hoodRoller.move_velocity(-200);
+  global::intake.move_velocity(-600);
+  pros::delay(350);
+  stopAll();
+  outTop();
+  pros::delay(2700);
+  stopAll();
+  chassis.pid_drive_set(8, DRIVE_SPEED);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_drive_set(-10, DRIVE_SPEED);
+  chassis.pid_wait();
+
+}
+
+void redLeftTopOnly(){
+
+}
+
+void redRightTopOnly(){
 
 }
