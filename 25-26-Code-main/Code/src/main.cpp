@@ -1,6 +1,5 @@
 #include "main.h"
 
-
 /////
 // For installation, upgrading, documentations, and tutorials, check out our website!
 // https://ez-robotics.github.io/EZ-Template/
@@ -15,22 +14,20 @@ ez::Drive chassis(
 
 
     12,      // IMU Port (4 = radio)
-    2.86,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!) Actual wheels are 3.25
-    400);   // Wheel RPM = cartridge * (motor gear / wheel gear) Actual rpm is 360
+    3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!) Actual wheels are 3.25
+    360);   // Wheel RPM = cartridge * (motor gear / wheel gear) Actual rpm is 360
 
   // extern bool teamBlue = false;
   bool colorStatus = true;
   bool dP = false;
   bool teamBlue;
-  // int opticalDistance = global::color.get_proximity();
-  // int activeColor = global::color.get_hue(); 
 
   int startTime = 0;
   int scoreTime = 0;
 
 // Uncomment the trackers  you're using here!
 // ez::tracking_wheel horiz_tracker(16, 2, 5.25);  // This tracking wheel is perpendicular to the drive wheels
-ez::tracking_wheel vert_tracker(-11, 2, 5.5);   // This tracking wheel is parallel to the drive wheels //og (-11, 2, 5.5) 12/9/25
+// ez::tracking_wheel vert_tracker(-11, 2, 5.5);   // This tracking wheel is parallel to the drive wheels //og (-11, 2, 5.5) 12/9/25
 
 
 /**S
@@ -44,7 +41,7 @@ void initialize() {
   ez::ez_template_print();
 
 
-  pros::delay(500);  // Stop the user from doing anything while legacy ports configure
+  pros::delay(300);  // Stop the user from doing anything while legacy ports configure
 
 
   // Look at your horizontal tracking wheel and decide if it's in front of the midline of your robot or behind it
@@ -54,7 +51,7 @@ void initialize() {
   // Look at your vertical tracking wheel and decide if it's to the left or right of the center of the robot
   //  - change `left` to `right` if the tracking wheel is to the right of the centerline
   //  - ignore this if you aren't using a vertical tracker
-  chassis.odom_tracker_left_set(&vert_tracker);
+  // chassis.odom_tracker_left_set(&vert_tracker);
   chassis.odom_enable(true);  // Enable odometry
 
 
@@ -71,10 +68,6 @@ void initialize() {
     teamBlue = true;  
   }
 
-  ez::ez_template_print();
-
-
-
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
   // chassis.opcontrol_curve_buttons_left_set(pros::E_CONTROLLER_DIGITAL_LEFT, pros::E_CONTROLLER_DIGITAL_RIGHT);  // If using tank, only the left side is used.
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
@@ -82,10 +75,12 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton{"LEFT SIDEEEEEE", blueLeftTopOnly},
-      Auton{"RIGHT SIDEEEEEEE", blueRightTopOnly},
-      Auton{"sssssssskils", skills},
-      // Auton{"", rightTopOnly},
+      Auton{"LEFT Top Goal ONLY", leftTop},
+      Auton{"RIGHT Top Goal ONLY", rightTop},
+      Auton{"LEFT Mid + Top Goals", leftMid},
+      Auton{"RIGHT Mid + Top Goals", rightMid},
+      Auton{"SOLO WINNERSSSS", SAWP},
+      Auton{"Skills", skills},
 
   });
 
@@ -139,6 +134,7 @@ void autonomous() {
   chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
   chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency.
   ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
+
 }
 
 
@@ -219,8 +215,8 @@ void ez_template_extras() {
     //  When enabled:
     //  * use A and Y to increment / decrement the constants
     //  * use the arrow keys to navigate the constants
-    // if (master.get_digital_new_press(DIGITAL_X))
-    //   // chassis.pid_tuner_toggle();
+    if (master.get_digital_new_press(DIGITAL_X))
+      chassis.pid_tuner_toggle();
 
 
     // Trigger the selected autonomous routine
@@ -248,7 +244,7 @@ void scoreColorSort() {
     int opticalDistance = global::color.get_proximity(); //Timing
     int activeColor = global::color.get_hue();
     int currentTime = pros::millis();
-    int scoreDuration = 150;
+    int scoreDuration = 180;
   if (master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
     pros::lcd::set_text(3, std::to_string((scoreTime)));
     scoreTime = pros::millis();
@@ -381,11 +377,13 @@ void opcontrol() {
     int opticalDistance = global::color.get_proximity();
     int currentTime = pros::millis();
     int scoreDuration = 150;
-    global::color.set_led_pwm(35);
-teamBlue = true;
-    pros::lcd::set_text (4, std::to_string(teamBlue));
-    pros::lcd::set_text(6, std::to_string(global::color.get_proximity()));
-    pros::lcd::set_text(7, std::to_string(global::color.get_hue()));
+    teamBlue = true;
+
+    // pros::lcd::set_text (4, std::to_string(teamBlue));
+    // pros::lcd::set_text(5, std::to_string(colorStatus));
+    // pros::lcd::set_text(6, std::to_string(global::color.get_proximity()));
+    // pros::lcd::set_text(7, std::to_string(global::color.get_hue()));
+    pros::lcd::set_text(7, std::to_string(chassis.drive_imu_get()));
  
       // pros::lcd::set_text(2, std::to_string(scoreDuration));
       // pros::lcd::set_text(3, std::to_string((scoreTime)));
@@ -393,38 +391,35 @@ teamBlue = true;
       // pros::lcd::set_text(5, std::to_string(master.get_digital(DIGITAL_Y)));
       // pros::lcd::set_text(6, std::to_string(y));
       // pros::lcd::set_text(7, std::to_string(pros::millis()));
-      pros::lcd::set_text(5, std::to_string(colorStatus));
 
-  if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
-    pros::lcd::set_text(3, std::to_string((scoreTime)));
-    scoreTime = pros::millis();
-      if (!y) {
-        y = true;
-      } else if (y) {
-        y = false;
-      }
-  }
+  // if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
+  //   pros::lcd::set_text(3, std::to_string((scoreTime)));
+  //   scoreTime = pros::millis();
+  //     if (!y) {
+  //       y = true;
+  //     } else if (y) {
+  //       y = false;
+  //     }
+  // }
 
     bool top = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
     bool mid = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
 
     if (!pros::competition::is_connected()){
-      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_LEFT)) {
+      if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R2)) {
         // turnCW90();
-        blueLeftTopOnly();
+        driveFwd24();
       }   
-      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_RIGHT)){
-        skills();
+      if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R1)){
+        // turnCCW90();
+        driveBack24();
       }
-      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_UP)){
-        // driveFwd24();
-        blueRightTopOnly();
-      }
-      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_DOWN)){
-        // measure_offsets();
-        // odom_drive_example();
-        // drive_and_turn();
-      }
+    //   if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)){
+    //     driveFwd24();
+    //   }
+    //   if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)){
+    //     driveBack24();
+    //   }
      }
     
     // chassis.opcontrol_tank();  // Tank control
@@ -434,44 +429,16 @@ teamBlue = true;
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
     
-    if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
-      global::topDescore.toggle();
+    if (master.get_digital(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
+      global::descore.set_value(false);
+    } else if(!master.get_digital(DIGITAL_DOWN)) {
+      global::descore.set_value(true);
     }
-    if (master.get_digital_new_press(DIGITAL_L1)) { // L1 Toggle = Middle De-score
-      global::midDescore.toggle();
+    if (master.get_digital(DIGITAL_L2)) { // DOWN Toggle = Match Loader
+      global::tongue.extend();
+    } else if (!master.get_digital(DIGITAL_L2)) {
+      global::tongue.retract();
     }
-    if (master.get_digital_new_press(DIGITAL_L2)) { // DOWN Toggle = Match Loader
-      global::tongue.toggle();
-    }
-    // if (master.get_digital_new_press(DIGITAL_UP)) { // UP Toggle = Activates/Deactivates Color Sorting Code and Double Park Mech
-    //   if (colorStatus) {
-    //     master.rumble("..");
-    //     colorStatus = false;
-    //     // dP = false;
-    //   } else if (!colorStatus) {
-    //     master.rumble("-");
-    //     colorStatus = true;
-    //     // dP = true;
-    //   }
-    // }
-
-
-    // if (master.get_digital_new_press(DIGITAL_LEFT)) { // LEFT Macro = Starts Double Park
-    //   dP = true;
-    //   if (dP) {
-    //     while (global::distance.get() > 50){
-    //       global::intake.move_velocity(-300);
-    //       global::topRoller.move_velocity(-200);
-    //       if (master.get_digital_new_press(DIGITAL_LEFT)){
-    //         dP = false;
-    //     }
-    //    }
-    //   global::topRoller.brake();
-    //   global::intake.move_velocity(-600);
-    //   pros::delay(95);
-    //   global::intake.brake();
-    // }
-
 
     if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
       intake();
@@ -481,7 +448,8 @@ teamBlue = true;
       outTop();
     } else if (master.get_digital(DIGITAL_B)) {// B Hold = Middle Goal Score
        if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
-        global::hoodRoller.move_velocity(600);
+        // global::topRoller.move_velocity(-200);
+        global::hoodRoller.move_velocity(-200);
       } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
         outMid();
       }

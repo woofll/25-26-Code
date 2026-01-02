@@ -14,8 +14,7 @@ extern pros::Distance distance;
 extern pros::Rotation odom;
 
 extern pros::adi::Pneumatics tongue;
-extern pros::adi::Pneumatics topDescore;
-extern pros::adi::Pneumatics midDescore;
+extern pros::adi::Pneumatics descore;
 extern pros::adi::Pneumatics hood;
 
 extern pros::Motor testMotor1;

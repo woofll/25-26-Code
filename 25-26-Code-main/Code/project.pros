@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "MATCH FINALS",
+    "project_name": "kyo",
     "target": "v5",
     "templates": {
       "EZ-Template": {
@@ -424,9 +424,9 @@
       }
     },
     "upload_options": {
-      "description": "Fragrant Flower",
-      "icon": "alien",
-      "slot": 2
+      "description": "ayame",
+      "icon": "robot",
+      "slot": 1
     },
     "use_early_access": false
   }

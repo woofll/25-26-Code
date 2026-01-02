@@ -5,21 +5,26 @@
 // https://ez-robotics.github.io/EZ-Template/
 /////
 
+
 // These are out of 127
 const int DRIVE_SPEED = 110;
 const int TURN_SPEED = 90;
 const int SWING_SPEED = 110;
 // bool teamBlue = false;
-///
-// Constants (Use if PID)
-///
+
+std::string wait = "chassis.pid_wait()";
+std::string waitq = "chassis.pid_wait_quick()";
+std::string waitqc = "chassis.pid_wait_quick_chain()";
+std::string drive = "chassis.pid_drive_set";
+std::string turn = "chassis.pid_turn_set";
+
 void default_constants() {
-  // P, I, D, and Start I
-  // chassis.pid_drive_constants_set(10.0, 0.0, 100.0);  
-  chassis.pid_drive_constants_forward_set(14, 0.0, 100.0); //og (14, 0, 100);
-  chassis.pid_drive_constants_backward_set(14, 0.0, 100.0);       // Fwd/rev constants, used for odom and non odom motions
-  chassis.pid_heading_constants_set(8, 0.0, 20.0);        // Holds the robot straight while going forward without odom
-  chassis.pid_turn_constants_set(3.0, 0.05, 20.0, 15.0);     // Turn in place constants
+  // P, I, D, and Start I 
+  chassis.pid_drive_constants_set(13.0, 0.0, 100.0);       // Fwd/rev constants, used for odom and non odom motions
+  // chassis.pid_drive_constants_forward_set(16, 0, 100);
+  // chassis.pid_drive_constants_backward_set(14, 0, 100);
+  chassis.pid_heading_constants_set(7.5, 0.0, 30);        // Holds the robot straight while going forward without odom
+  chassis.pid_turn_constants_set(3.0, 0.01, 19.0, 15.0);     // Turn in place constants
   chassis.pid_swing_constants_set(6.0, 0.0, 65.0);           // Swing constants
   chassis.pid_odom_angular_constants_set(6.5, 0.0, 53.0);    // Angular control for odom motions
   chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5);  // Angular control for boomerang motions
@@ -32,11 +37,11 @@ void default_constants() {
   // chassis.pid_odom_boomerang_constants_set(5.8, 0.0, 32.5);  // Angular control for boomerang motions
 
   // Exit conditions
-  chassis.pid_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
-  chassis.pid_swing_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
-  chassis.pid_drive_exit_condition_set(90_ms, 0.9_in, 250_ms, 3_in, 500_ms, 500_ms);
-  chassis.pid_odom_turn_exit_condition_set(90_ms, 3_deg, 250_ms, 7_deg, 500_ms, 750_ms);
-  chassis.pid_odom_drive_exit_condition_set(90_ms, 1_in, 250_ms, 3_in, 500_ms, 750_ms);
+  chassis.pid_turn_exit_condition_set(140_ms, 3_deg, 300_ms, 7_deg, 510_ms, 500_ms);
+  chassis.pid_swing_exit_condition_set(80_ms, 3_deg, 250_ms, 7_deg, 500_ms, 500_ms);
+  chassis.pid_drive_exit_condition_set(80_ms, 1_in, 250_ms, 3_in, 500_ms, 500_ms);
+  chassis.pid_odom_turn_exit_condition_set(80_ms, 3_deg, 250_ms, 7_deg, 500_ms, 750_ms);
+  chassis.pid_odom_drive_exit_condition_set(80_ms, 1_in, 250_ms, 3_in, 500_ms, 750_ms);
   chassis.pid_turn_chain_constant_set(3_deg);
   chassis.pid_swing_chain_constant_set(5_deg);
   chassis.pid_drive_chain_constant_set(3_in);
@@ -60,6 +65,7 @@ void default_constants() {
 ///
 // Drive Example
 ///
+
 void drive_pid() {
   // The first parameter is target inches
   // The second parameter is max speed the robot will drive at
@@ -67,10 +73,10 @@ void drive_pid() {
   // for slew, only enable it when the drive distance is greater than the slew distance + a few inches
 
   chassis.pid_drive_set(24_in, DRIVE_SPEED, true);
-  chassis.pid_wait();
+  wait;
 
   chassis.pid_drive_set(-24_in, DRIVE_SPEED);
-  chassis.pid_wait();
+  wait;
 }
 
 ///
@@ -101,7 +107,7 @@ void drive_and_turn() {
   chassis.pid_wait_quick_chain();
 
   chassis.pid_drive_set(12_in, DRIVE_SPEED);
-  chassis.pid_wait();
+  wait;
 
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
   chassis.pid_wait_quick();
@@ -312,13 +318,14 @@ void driveBack24(){
   chassis.pid_wait();
 }
 void turnCW90(){
-  chassis.pid_turn_set(90_deg, TURN_SPEED);
+  chassis.pid_turn_set(90_deg, 70);
   chassis.pid_wait();
 }
 void turnCCW90(){
-  chassis.pid_turn_set(-90_deg, TURN_SPEED);
+  chassis.pid_turn_set(-90_deg, 70);
   chassis.pid_wait();
 }
+
 void skills(){
   // chassis.odom_enable(true);
   // chassis.odom_xyt_set(-14, -48, -90);
@@ -328,10 +335,10 @@ void skills(){
   // chassis.pid_wait();
 
   chassis.pid_drive_set(31.2_in, DRIVE_SPEED);
-  chassis.pid_wait();
+  wait;
 
   chassis.pid_turn_set(-90_deg, TURN_SPEED);
-  chassis.pid_wait();
+  wait;
   global::tongue.toggle();
   pros::delay(500);
 
@@ -425,22 +432,10 @@ void skills(){
   outTop();
   chassis.pid_drive_set(20, 127);
   chassis.pid_wait();
-
-
-
-  
-
 }
 
-void leftMid(){
 
-}
-
-void rightMid(){
-
-}
-
-void blueLeftTopOnly(){
+void leftTop(){
   chassis.pid_drive_set(9, DRIVE_SPEED);
   chassis.pid_wait();
 
@@ -517,7 +512,7 @@ void blueLeftTopOnly(){
 
 }
 
-void blueRightTopOnly(){
+void rightTop(){
    chassis.pid_drive_set(9, DRIVE_SPEED);
   chassis.pid_wait();
 
@@ -589,10 +584,14 @@ void blueRightTopOnly(){
 
 }
 
-void redLeftTopOnly(){
+void leftMid(){
 
 }
 
-void redRightTopOnly(){
+void rightMid(){
 
+}
+
+void SAWP() {
+  
 }

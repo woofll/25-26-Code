@@ -8,23 +8,23 @@ void drive_and_turn();
 void wait_until_change_speed();
 void swing_example();
 void motion_chaining();
-void combining_movements();
 void odom_drive_example();
 void odom_pure_pursuit_example();
 void odom_pure_pursuit_wait_until_example();
 void measure_offsets();
 
-
-
 void driveFwd24();
 void driveBack24();
 void turnCW90();
 void turnCCW90();
-void matchLoading();
+
 void skills();
 
-void blueLeftTopOnly();
-void blueRightTopOnly();
+/*********************** AUTO PROGRAMS ******************************/
+void leftTop();
+void rightTop();
 
-void redLeftTopOnly();
-void redRightTopOnly();
+void leftMid();
+void rightMid();
+
+void SAWP();
