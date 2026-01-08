@@ -214,10 +214,10 @@ void ez_template_extras() {
     // Enable / Disable PID Tuner
     //  When enabled:
     //  * use A and Y to increment / decrement the constants
-    //  * use the arrow keys to navigate the constants
+    //  * use the arrow keys to navigate the constants 
     if (master.get_digital_new_press(DIGITAL_X))
       chassis.pid_tuner_toggle();
-
+    // I GOON TO 100 TIMES TO JAYDEN THIS YEAR!!!!
 
     // Trigger the selected autonomous routine
     if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)) {
@@ -366,12 +366,13 @@ void opcontrol() {
   bool tongue = true; //Tongue is up
   bool descore = false; //Descore is retracted
   bool intaked = false; //Intaking is active
+  bool arcade = true;
   bool y = false;
+
 
   teamBlue = true;
 
   while (true) {
-    // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
     int activeColor = global::color.get_hue();
     int opticalDistance = global::color.get_proximity();
@@ -407,8 +408,7 @@ void opcontrol() {
 
     if (!pros::competition::is_connected()){
       if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R2)) {
-        // turnCW90();
-        driveFwd24();
+        leftTop();
       }   
       if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R1)){
         // turnCCW90();
@@ -423,18 +423,21 @@ void opcontrol() {
      }
     
     // chassis.opcontrol_tank();  // Tank control
-    chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade !!!USE THIS!!!!
+    // chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade !!!USE THIS!!!!
     // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
     
-    if (master.get_digital(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
-      global::descore.set_value(false);
-    } else if(!master.get_digital(DIGITAL_DOWN)) {
-      global::descore.set_value(true);
+    /*********************************************************     CAM CONTROLS      ******************************************************************************************** */
+    chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade !!!USE THIS!!!!
+    
+
+    if (master.get_digital_new_press(DIGITAL_DOWN)){ //DOWN Toggle = Descore
+      global::descore.toggle();
     }
-    if (master.get_digital(DIGITAL_L2)) { // DOWN Toggle = Match Loader
+
+    if (master.get_digital(DIGITAL_L2)) { // L2 Toggle = Match Loader
       global::tongue.extend();
     } else if (!master.get_digital(DIGITAL_L2)) {
       global::tongue.retract();
@@ -449,7 +452,8 @@ void opcontrol() {
     } else if (master.get_digital(DIGITAL_B)) {// B Hold = Middle Goal Score
        if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
         // global::topRoller.move_velocity(-200);
-        global::hoodRoller.move_velocity(-200);
+        global::topRoller.move_velocity(-200);
+        global::hoodRoller.move_velocity(200);
       } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
         outMid();
       }
@@ -458,39 +462,41 @@ void opcontrol() {
     }
 
 
+    /*******************************************************      JAYDEN CONTROLS       *************************************************************************************** */
 
+    // chassis.opcontrol_tank();  // Tank control
+
+
+    // if (master.get_digital_new_press(DIGITAL_L1)) { // DOWN Toggle = Match Loader
+    //   global::descore.set_value(false);
+    // } else if(!master.get_digital(DIGITAL_L1)) {
+    //   global::descore.set_value(true);
+    // }
+    // if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
+    //   global::tongue.toggle(); 
+    // }
+    // if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
+    //   intake();
+    // } else if (master.get_digital(DIGITAL_L2)){// R1 Hold = Reverse Intake/Bottom Goal Score
+    //   outLow();
+    // } else if (master.get_digital(DIGITAL_B)){// B Hold = Top Goal Score
+    //   outTop();
+    // } else if (master.get_digital(DIGITAL_Y)) {// Y Hold = Middle Goal Score
+    //    if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) < scoreDuration){ 
+    //     // global::topRoller.move_velocity(-200);
+    //     global::topRoller.move_velocity(-200);
+    //     global::hoodRoller.move_velocity(200);
+    //   } else if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) >= scoreDuration) {
+    //     outMidSkills();
+    //   }
+    // } else { // Stop all motors if nothing pressed
+    //   stopAll();
+    // }
+
+/****************************************************************************************************************************************************************************************** */
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
     } 
   }
-
-
-/******************************************************************************************************************************** */
-  // void opcontrol() { //TEST OP CONTROL
-  //   chassis.drive_brake_set(MOTOR_BRAKE_COAST);
-  //  while (true) {
-  //   // Gives you some extras to make EZS-Template ezier
-  //   global::color.set_led_pwm(35);
-  //   pros::lcd::set_text (5, std::to_string(teamBlue));
-  //   pros::lcd::set_text(6, std::to_string(global::color.get_proximity()));
-  //   pros::lcd::set_text(7, std::to_string(global::color.get_hue()));
-  //   ez_template_extras();
-  //   if (master.get_digital_new_press(DIGITAL_L2)){
-  //     if (teamBlue) {
-  //       teamBlue = false;
-  //     } else if (!teamBlue) {
-  //       teamBlue = true;
-  //     }
-  //   }
-  //   if (master.get_digital(DIGITAL_R2)) {
-  //     global::testMotor1.move_velocity(200);
-  //     TESTColorSort();
-  //   } else {
-  //     global::testMotor1.brake();
-  //   }
-  //   pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
-  //   }
-  // }
-
 
 //run this before pros m
 //    pros m --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"

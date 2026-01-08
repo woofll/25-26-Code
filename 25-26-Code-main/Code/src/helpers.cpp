@@ -11,11 +11,11 @@ void intake() {
     if (global::color.get_proximity() < 200){
         global::intake.move_velocity(600);
         global::topRoller.move_velocity(200);
-        global::hoodRoller.move_velocity(120);    
+        global::hoodRoller.move_velocity(75);    
     } else if (global::color.get_proximity() >= 200){
         global::intake.move_velocity(600);
-        global::topRoller.move_velocity(200);
-        global::hoodRoller.move_velocity(75);
+        global::topRoller.move_velocity(170);
+        global::hoodRoller.move_velocity(55);
     }
         
 }
@@ -24,7 +24,7 @@ void reverseIntake() {
     global::topRoller.move_velocity(-200);
 }
 
-//
+//I WANNA GOON AND COME
 
 void outTop() {
     global::intake.move_velocity(600);
@@ -36,8 +36,15 @@ void outTop() {
 void outMid() {
     global::intake.move_velocity(600);
     global::topRoller.move_velocity(200);
-    global::hoodRoller.move_velocity(-200);
+    global::hoodRoller.move_velocity(-160);
 }
+
+void outMidSkills(){
+    global::intake.move_velocity(300);
+    global::topRoller.move_velocity(100);
+    global::hoodRoller.move_velocity(-100);
+}
+
 void outLow() {
     global::intake.move_velocity(-600);
     global::topRoller.move_velocity(-200);
