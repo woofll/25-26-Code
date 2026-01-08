@@ -455,12 +455,10 @@ void leftTop(){
   intake();
   chassis.pid_drive_set(7, 75);
   chassis.pid_wait_quick_chain();
-  global::tongue.toggle();
   chassis.pid_drive_set(11, 25);
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(6, 80);
   chassis.pid_wait_quick_chain();
-  global::tongue.toggle();
   stopAll();
 
   chassis.pid_drive_set(-4, DRIVE_SPEED);
@@ -496,8 +494,6 @@ void leftTop(){
   chassis.pid_wait_quick_chain();
   chassis.pid_drive_set(-14, DRIVE_SPEED);
   chassis.pid_wait();
-
-
 }
 
 void leftTopDescore(){ 
@@ -575,5 +571,77 @@ void rightMid(){
 }
 
 void SAWP() {
+  chassis.drive_angle_set(90);
+
+  //Phase 1 - Match Load and fill right goal
+  chassis.pid_drive_set(34, 110);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(180, 90);
+  chassis.pid_wait_quick();
+  global::tongue.toggle();
+  intake();
+
+  chassis.pid_drive_set(7, 80);
+  chassis.pid_wait_quick();
+  chassis.drive_set(45, 45);
+  pros::delay(575);
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-4, 100);
+  chassis.pid_wait_quick_chain();
+  chassis.drive_set(-90, -90);
+  pros::delay(450); //350
+  chassis.drive_set(0, 0);
+  pros::delay(300); //500
+  chassis.pid_wait();
+  outTop();
+  pros::delay(1000);
+  stopAll();
+
+  chassis.pid_drive_set(10, 110);
+  global::tongue.toggle();
+  chassis.pid_wait_quick_chain();
+
+  //Phase 2 - Collect the 6 Center Corner Balls
+  chassis.pid_turn_set(210, 90);
+  chassis.pid_wait_quick();
+  intake();
+  chassis.pid_drive_set(24, 80);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(270, 90);
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(48, 80);
+  chassis.pid_wait_quick_chain();
+
+  chassis.pid_drive_set(-4, 110);
+  chassis.pid_wait_quick_chain();
+
+  //Phase 3 - Put 3 balls into top center goal
+  chassis.pid_turn_set(215, 90);
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-4, 110);
+  chassis.pid_wait_quick_chain();
+  outMid();
+  pros::delay(500);
+  stopAll();
   
+  //Phase 4 - Go to Left Match Loader and place rest of balls into long goal
+  chassis.pid_drive_set(48, 110);
+  chassis.pid_wait_quick_chain();
+  chassis.pid_turn_set(180, 90);
+  chassis.pid_wait_quick();
+  global::tongue.toggle();
+  chassis.pid_drive_set(7, 80);
+  chassis.pid_wait_quick();
+  chassis.drive_set(45, 45);
+  pros::delay(575);
+  chassis.pid_wait_quick();
+  chassis.pid_drive_set(-4, 100);
+  chassis.pid_wait_quick_chain();
+  chassis.drive_set(-90, -90);
+  pros::delay(450); //350
+  chassis.drive_set(0, 0);
+  pros::delay(300); //500
+  chassis.pid_wait();
+  outTop();
+
 }
