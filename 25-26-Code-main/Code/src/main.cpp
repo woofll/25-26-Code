@@ -75,8 +75,8 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton{"LEFT Top Goal ONLY", leftTop},
-      Auton{"RIGHT Top Goal ONLY", rightTop},
+      Auton{"LEFT Top Goal ONLY", SAWP},
+      Auton{"RIGHT Top Goal ONLY", rightTopDescore},
       Auton{"LEFT Mid + Top Goals", leftMid},
       Auton{"RIGHT Mid + Top Goals", rightMid},
       Auton{"SOLO WINNERSSSS", SAWP},
@@ -239,62 +239,62 @@ void ez_template_extras() {
   }
 }
 
-void scoreColorSort() {  
+// void scoreColorSort() {  
   
-    int opticalDistance = global::color.get_proximity(); //Timing
-    int activeColor = global::color.get_hue();
-    int currentTime = pros::millis();
-    int scoreDuration = 180;
-  if (master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
-    pros::lcd::set_text(3, std::to_string((scoreTime)));
-    scoreTime = pros::millis();
-  }
+//     int opticalDistance = global::color.get_proximity(); //Timing
+//     int activeColor = global::color.get_hue();
+//     int currentTime = pros::millis();
+//     int scoreDuration = 180;
+//   if (master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
+//     pros::lcd::set_text(3, std::to_string((scoreTime)));
+//     scoreTime = pros::millis();
+//   }
 
-  if (colorStatus == true){ // If color sorting is active.
-    if (opticalDistance > 150 && master.get_digital(DIGITAL_Y)) { // If we are detecting a ball and scoring top
-      if (teamBlue == true){ // And If we are blue
-        if (activeColor > 0 && activeColor < 40){ // We detect red
-        global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
-        } 
-        //   else {
-        //    outTop();
-        // }
+//   if (colorStatus == true){ // If color sorting is active.
+//     if (opticalDistance > 150 && master.get_digital(DIGITAL_Y)) { // If we are detecting a ball and scoring top
+//       if (teamBlue == true){ // And If we are blue
+//         if (activeColor > 0 && activeColor < 40){ // We detect red
+//         global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
+//         } 
+//         //   else {
+//         //    outTop();
+//         // }
 
-    } else if (teamBlue == false) { // And If we are red
-        if (activeColor > 120 && activeColor < 250){ // We detect blue
-        global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
-        }
-       //   else {
-        //    outTop();
-        // }
-    }
-/**/
- } else if (opticalDistance > 150 && master.get_digital(DIGITAL_B)) { // If we are detecting a ball and scoring mid 
-      if (teamBlue == true){ // And If we are blue
-        if (activeColor > 0 && activeColor < 40){ // We detect red
-        global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
-        global::hood.set_value(true);
-        }
-          //  if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
-          //   global::hoodRoller.move_velocity(-600);
-          // } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
-          //     outMid();
-          // }
+//     } else if (teamBlue == false) { // And If we are red
+//         if (activeColor > 120 && activeColor < 250){ // We detect blue
+//         global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
+//         }
+//        //   else {
+//         //    outTop();
+//         // }
+//     }
+// /**/
+//  } else if (opticalDistance > 150 && master.get_digital(DIGITAL_B)) { // If we are detecting a ball and scoring mid 
+//       if (teamBlue == true){ // And If we are blue
+//         if (activeColor > 0 && activeColor < 40){ // We detect red
+//         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
+//         global::hood.set_value(true);
+//         }
+//           //  if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
+//           //   global::hoodRoller.move_velocity(-600);
+//           // } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
+//           //     outMid();
+//           // }
 
-      } else if (teamBlue == false) { // And If we are red
-        if (activeColor > 120 && activeColor < 250){ // We detect blue
-        global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
-        global::hood.set_value(true);
-      }
-      //   else {
-        //    outMid();
-        // }
-    }
-  } else {} // If we don't see anything, do nothing
- } else if (colorStatus == false) {} //If color sorting is inactive, do nothing
+//       } else if (teamBlue == false) { // And If we are red
+//         if (activeColor > 120 && activeColor < 250){ // We detect blue
+//         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
+//         global::hood.set_value(true);
+//       }
+//       //   else {
+//         //    outMid();
+//         // }
+//     }
+//   } else {} // If we don't see anything, do nothing
+//  } else if (colorStatus == false) {} //If color sorting is inactive, do nothing
 
 
-}
+// }
 
 void intakeColorSort() {
 int opticalDistance = global::color.get_proximity();
@@ -393,26 +393,26 @@ void opcontrol() {
       // pros::lcd::set_text(6, std::to_string(y));
       // pros::lcd::set_text(7, std::to_string(pros::millis()));
 
-  // if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
-  //   pros::lcd::set_text(3, std::to_string((scoreTime)));
-  //   scoreTime = pros::millis();
-  //     if (!y) {
-  //       y = true;
-  //     } else if (y) {
-  //       y = false;
-  //     }
-  // }
+  if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
+    pros::lcd::set_text(3, std::to_string((scoreTime)));
+    scoreTime = pros::millis();
+      if (!y) {
+        y = true;
+      } else if (y) {
+        y = false;
+      }
+  }
 
     bool top = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
     bool mid = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
 
     if (!pros::competition::is_connected()){
       if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R2)) {
-        leftTop();
+        rightTopDescore();
       }   
       if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R1)){
         // turnCCW90();
-        driveBack24();
+        SAWP();
       }
     //   if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)){
     //     driveFwd24();

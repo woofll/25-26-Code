@@ -32,3 +32,4 @@ void SAWP();
 
 
 void leftTopDescore();
+void rightTopDescore();

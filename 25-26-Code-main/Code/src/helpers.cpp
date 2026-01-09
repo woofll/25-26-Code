@@ -14,7 +14,7 @@ void intake() {
         global::hoodRoller.move_velocity(75);    
     } else if (global::color.get_proximity() >= 200){
         global::intake.move_velocity(600);
-        global::topRoller.move_velocity(170);
+        global::topRoller.move_velocity(180);
         global::hoodRoller.move_velocity(55);
     }
         
