@@ -24,6 +24,7 @@ ez::Drive chassis(
 
   int startTime = 0;
   int scoreTime = 0;
+  int midTime = 0;
 
 // Uncomment the trackers  you're using here!
 // ez::tracking_wheel horiz_tracker(16, 2, 5.25);  // This tracking wheel is perpendicular to the drive wheels
@@ -75,11 +76,11 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton{"LEFT Top Goal ONLY", SAWP},
-      Auton{"RIGHT Top Goal ONLY", rightTopDescore},
-      Auton{"LEFT Mid + Top Goals", leftMid},
-      Auton{"RIGHT Mid + Top Goals", rightMid},
-      Auton{"SOLO WINNERSSSS", SAWP},
+      Auton{"LEFT Top Goal ONLY 7", leftTopDescore},
+      Auton{"RIGHT Top Goal ONLY 7", rightTopDescore},
+      Auton{"LEFT MID 3 + 4", leftMid},
+      Auton{"RIGHT MID 3 + 4", rightMid},
+      Auton{"SOLO WINNERSSSS 14", SAWP},
       Auton{"Skills", skills},
 
   });
@@ -365,8 +366,7 @@ void opcontrol() {
   // variable start
   bool tongue = true; //Tongue is up
   bool descore = false; //Descore is retracted
-  bool intaked = false; //Intaking is active
-  bool arcade = true;
+  
   bool y = false;
 
 
@@ -378,6 +378,8 @@ void opcontrol() {
     int opticalDistance = global::color.get_proximity();
     int currentTime = pros::millis();
     int scoreDuration = 150;
+    int midTime = 650;
+
     teamBlue = true;
 
     // pros::lcd::set_text (4, std::to_string(teamBlue));
@@ -393,26 +395,26 @@ void opcontrol() {
       // pros::lcd::set_text(6, std::to_string(y));
       // pros::lcd::set_text(7, std::to_string(pros::millis()));
 
-  if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
-    pros::lcd::set_text(3, std::to_string((scoreTime)));
-    scoreTime = pros::millis();
-      if (!y) {
-        y = true;
-      } else if (y) {
-        y = false;
-      }
-  }
+  // if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
+  //   pros::lcd::set_text(3, std::to_string((scoreTime)));
+  //   scoreTime = pros::millis();
+  //     if (!y) {
+  //       y = true;
+  //     } else if (y) {
+  //       y = false;
+  //     }
+  // }
 
     bool top = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
     bool mid = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
 
     if (!pros::competition::is_connected()){
       if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R2)) {
-        rightTopDescore();
+        leftMid();
       }   
       if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R1)){
         // turnCCW90();
-        SAWP();
+        skills();
       }
     //   if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)){
     //     driveFwd24();
@@ -432,6 +434,16 @@ void opcontrol() {
     /*********************************************************     CAM CONTROLS      ******************************************************************************************** */
     chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade !!!USE THIS!!!!
     
+
+    if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
+    pros::lcd::set_text(3, std::to_string((scoreTime)));
+    scoreTime = pros::millis();
+      if (!y) {
+        y = true;
+      } else if (y) {
+        y = false;
+      }
+  }
 
     if (master.get_digital_new_press(DIGITAL_DOWN)){ //DOWN Toggle = Descore
       global::descore.toggle();
@@ -464,34 +476,44 @@ void opcontrol() {
 
     /*******************************************************      JAYDEN CONTROLS       *************************************************************************************** */
 
-    // chassis.opcontrol_tank();  // Tank control
+  //   chassis.opcontrol_tank();  // Tank control
 
+  //   if (master.get_digital_new_press(DIGITAL_Y)) { // B is pressed, reset score time
+  //   pros::lcd::set_text(3, std::to_string((scoreTime)));
+  //   scoreTime = pros::millis();
+  //     if (!y) {
+  //       y = true;
+  //     } else if (y) {
+  //       y = false;
+  //     }
+  // }
 
-    // if (master.get_digital_new_press(DIGITAL_L1)) { // DOWN Toggle = Match Loader
-    //   global::descore.set_value(false);
-    // } else if(!master.get_digital(DIGITAL_L1)) {
-    //   global::descore.set_value(true);
-    // }
-    // if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
-    //   global::tongue.toggle(); 
-    // }
-    // if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
-    //   intake();
-    // } else if (master.get_digital(DIGITAL_L2)){// R1 Hold = Reverse Intake/Bottom Goal Score
-    //   outLow();
-    // } else if (master.get_digital(DIGITAL_B)){// B Hold = Top Goal Score
-    //   outTop();
-    // } else if (master.get_digital(DIGITAL_Y)) {// Y Hold = Middle Goal Score
-    //    if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) < scoreDuration){ 
-    //     // global::topRoller.move_velocity(-200);
-    //     global::topRoller.move_velocity(-200);
-    //     global::hoodRoller.move_velocity(200);
-    //   } else if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) >= scoreDuration) {
-    //     outMidSkills();
-    //   }
-    // } else { // Stop all motors if nothing pressed
-    //   stopAll();
-    // }
+  //   if (master.get_digital_new_press(DIGITAL_L1)) { // DOWN Toggle = Match Loader
+  //     global::descore.set_value(false);
+  //   } else if(!master.get_digital(DIGITAL_L1)) {
+  //     global::descore.set_value(true);
+  //   }
+  //   if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
+  //     global::tongue.toggle(); 
+  //   }
+  //   if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
+  //     intake();
+  //   } else if (master.get_digital(DIGITAL_L2)){// R1 Hold = Reverse Intake/Bottom Goal Score
+  //     outLow();
+  //   } else if (master.get_digital(DIGITAL_B)){// B Hold = Top Goal Score
+  //     outTop();
+  //   } else if (master.get_digital(DIGITAL_Y)) {// Y Hold = Middle Goal Score
+  //      if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) < scoreDuration){ 
+  //       global::topRoller.move_velocity(-200);
+  //       global::hoodRoller.move_velocity(200);
+  //     } else if (master.get_digital(DIGITAL_Y) && ((currentTime - scoreTime) >= scoreDuration) && (((currentTime - scoreTime) < midTime))) {
+  //       outMidSkillsFast();
+  //     } else if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) >= midTime){
+  //       outMidSkillsSlow();
+  //     }
+  //   } else { // Stop all motors if nothing pressed
+  //     stopAll();
+  //   }
 
 /****************************************************************************************************************************************************************************************** */
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME

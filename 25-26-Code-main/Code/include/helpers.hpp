@@ -5,7 +5,8 @@ void intake();
 void reverseIntake();
 void outTop();
 void outMid();
-void outMidSkills();
+void outMidSkillsFast();
+void outMidSkillsSlow();
 void outLow();
 void stopAll();
 
