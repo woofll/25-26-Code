@@ -76,12 +76,13 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton{"LEFT Top Goal ONLY 7", leftTopDescore},
-      Auton{"RIGHT Top Goal ONLY 7", rightTopDescore},
+      Auton{"LEFT Top Goal + Descore ONLY 7", leftTopDescore},
+      Auton{"RIGHT Top Goal + Descore ONLY 7", rightTopDescore},
       Auton{"LEFT MID 3 + 4", leftMid},
       Auton{"RIGHT MID 3 + 4", rightMid},
       Auton{"SOLO WINNERSSSS 14", SAWP},
       Auton{"Skills", skills},
+      Auton{"bum freaking skills brah", quickSkills},
 
   });
 
@@ -410,11 +411,11 @@ void opcontrol() {
 
     if (!pros::competition::is_connected()){
       if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R2)) {
-        leftMid();
+        SAWP();
       }   
       if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R1)){
         // turnCCW90();
-        skills();
+        leftMid();
       }
     //   if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)){
     //     driveFwd24();
@@ -493,8 +494,10 @@ void opcontrol() {
   //   } else if(!master.get_digital(DIGITAL_L1)) {
   //     global::descore.set_value(true);
   //   }
-  //   if (master.get_digital_new_press(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
-  //     global::tongue.toggle(); 
+  //   if (master.get_digital(DIGITAL_DOWN)) { // L2 Toggle = Match Loader
+  //     global::tongue.extend();
+  //   } else if (!master.get_digital(DIGITAL_DOWN)) {
+  //     global::tongue.retract();
   //   }
   //   if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
   //     intake();

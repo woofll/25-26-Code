@@ -20,6 +20,7 @@ void turnCCW90();
 void swingTest();
 
 void skills();
+void quickSkills();
 
 /*********************** AUTO PROGRAMS ******************************/
 void leftTop();
