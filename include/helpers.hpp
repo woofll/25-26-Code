@@ -10,3 +10,12 @@ void outMidSkillsSlow();
 void outLow();
 void stopAll();
 
+
+void posxdsr();
+void negxdsr();
+void posydsr();
+void negydsr();
+
+void turndsr();
+void staticdsr();
+

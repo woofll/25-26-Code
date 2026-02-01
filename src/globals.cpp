@@ -4,20 +4,22 @@ namespace global{
 //pros::sensorType sensorName (portNumber);
 //pros::adi::Pneumatics pneumaticsName('portLetter', state(true/false));
 
-pros::Motor intake(3, pros::v5::MotorGearset::rpm_600);
-pros::Motor topRoller(1, pros::v5::MotorGearset::rpm_200); 
-pros::Motor hoodRoller(-2, pros::v5::MotorGearset::rpm_200);
+pros::Motor intake(2, pros::v5::MotorGearset::rpm_600); //3
+pros::Motor topRoller(16, pros::v5::MotorGearset::rpm_200);  //1
+pros::Motor hoodRoller(-9, pros::v5::MotorGearset::rpm_200); //-2
 
-pros::Optical color(13);
-pros::Distance distance(14);
-// pros::Rotation odom(11);
+pros::Optical colorF(1);
+pros::Optical colorB(4);
 
-pros::adi::Pneumatics tongue('H', false); //Starts retracted
-pros::adi::Pneumatics descore('D', false); //Starts retracted 
-pros::adi::Pneumatics hood('A', false); //Starts retracted
+pros::Distance distanceF(20);
+pros::Distance distanceB(3);
+pros::Distance distanceL(20);
+pros::Distance distanceR(20);
+
+pros::adi::Pneumatics tongue('B', false); //Starts retracted
+pros::adi::Pneumatics hood('C', false); //Starts retracted
+pros::adi::Pneumatics descore('A', true); //Starts retracted 
 
 
-
-pros::Motor testMotor1(1, pros::v5::MotorGearset::blue);
 
 }

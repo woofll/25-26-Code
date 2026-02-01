@@ -9,26 +9,23 @@
 // Chassis constructor
 ez::Drive chassis(
     // These are your drive motors, the first motor is used for sensing!
-    {-10, -9, -8},     // Left Chassis Ports (negative port will reverse it!)
-    {5, 6, 7},  // Right Chassis Ports (negative port will reverse it!)
+     {-5, -8, 20},     // Left Chassis Ports (negative port will reverse it!) (10, -9, -8)
+    {6, -19, 7}, // Right Chassis Ports (negative port will reverse it!) (5, 6, 7)
 
-
-    12,      // IMU Port (4 = radio)
+    11,      // IMU Port (4 = radio)
     3.25,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!) Actual wheels are 3.25
-    360);   // Wheel RPM = cartridge * (motor gear / wheel gear) Actual rpm is 360
+    450);   // Wheel RPM = cartridge * (motor gear / wheel gear) Actual rpm is 360
 
   // extern bool teamBlue = false;
   bool colorStatus = true;
-  bool dP = false;
-  bool teamBlue;
+  bool teamBlue; 
 
-  int startTime = 0;
-  int scoreTime = 0;
-  int midTime = 0;
+  int startTime, scoreTime, colorTime, midTime = 0;
+
 
 // Uncomment the trackers  you're using here!
 // ez::tracking_wheel horiz_tracker(16, 2, 5.25);  // This tracking wheel is perpendicular to the drive wheels
-// ez::tracking_wheel vert_tracker(-11, 2, 5.5);   // This tracking wheel is parallel to the drive wheels //og (-11, 2, 5.5) 12/9/25
+// ez::tracking_wheel vert_tracker(-11, 2, 5.5);   // This tracking wheel is parallel tfo the drive wheels //og (-11, 2, 5.5) 12/9/25
 
 
 /**S
@@ -57,16 +54,16 @@ void initialize() {
 
 
   // Configure your chassis controls
-  chassis.opcontrol_curve_buttons_toggle(true);   // Enables modifying the controller curve with buttons on the joysticks
+  chassis.opcontrol_curve_buttons_toggle(false);   // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(0.0);   // Sets the active brake kP. We recommend ~2.  0 will disable.
-  chassis.opcontrol_curve_default_set(0.0, 0.0);  // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
+  chassis.opcontrol_curve_default_set(2.0, 2.0);  // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
 
 
   // Set the drive to your own constants from autons.cpp!
   default_constants();
-  int initialColor = global::color.get_hue();
-  if (initialColor > 120 && initialColor < 250) { //Checks if blue, if so = true
-    teamBlue = true;  
+  int initialColor = global::colorB.get_hue();
+  if (initialColor > 75 && initialColor < 250) { //Checks if blue, if so = true
+    teamBlue = true;
   }
 
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
@@ -80,7 +77,7 @@ void initialize() {
       Auton{"RIGHT Top Goal + Descore ONLY 7", rightTopDescore},
       Auton{"LEFT MID 3 + 4", leftMid},
       Auton{"RIGHT MID 3 + 4", rightMid},
-      Auton{"SOLO WINNERSSSS 14", SAWP},
+      // Auton{"SOLO WINNERSSSS 14", SAWP},
       Auton{"Skills", skills},
       Auton{"bum freaking skills brah", quickSkills},
 
@@ -241,106 +238,8 @@ void ez_template_extras() {
   }
 }
 
-// void scoreColorSort() {  
-  
-//     int opticalDistance = global::color.get_proximity(); //Timing
-//     int activeColor = global::color.get_hue();
-//     int currentTime = pros::millis();
-//     int scoreDuration = 180;
-//   if (master.get_digital_new_press(DIGITAL_B)) { // Y is pressed, reset score time
-//     pros::lcd::set_text(3, std::to_string((scoreTime)));
-//     scoreTime = pros::millis();
-//   }
-
-//   if (colorStatus == true){ // If color sorting is active.
-//     if (opticalDistance > 150 && master.get_digital(DIGITAL_Y)) { // If we are detecting a ball and scoring top
-//       if (teamBlue == true){ // And If we are blue
-//         if (activeColor > 0 && activeColor < 40){ // We detect red
-//         global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
-//         } 
-//         //   else {
-//         //    outTop();
-//         // }
-
-//     } else if (teamBlue == false) { // And If we are red
-//         if (activeColor > 120 && activeColor < 250){ // We detect blue
-//         global::hoodRoller.move_velocity(200); //Reversal; Balls shoot out mid
-//         }
-//        //   else {
-//         //    outTop();
-//         // }
-//     }
-// /**/
-//  } else if (opticalDistance > 150 && master.get_digital(DIGITAL_B)) { // If we are detecting a ball and scoring mid 
-//       if (teamBlue == true){ // And If we are blue
-//         if (activeColor > 0 && activeColor < 40){ // We detect red
-//         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
-//         global::hood.set_value(true);
-//         }
-//           //  if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
-//           //   global::hoodRoller.move_velocity(-600);
-//           // } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
-//           //     outMid();
-//           // }
-
-//       } else if (teamBlue == false) { // And If we are red
-//         if (activeColor > 120 && activeColor < 250){ // We detect blue
-//         global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
-//         global::hood.set_value(true);
-//       }
-//       //   else {
-//         //    outMid();
-//         // }
-//     }
-//   } else {} // If we don't see anything, do nothing
-//  } else if (colorStatus == false) {} //If color sorting is inactive, do nothing
 
 
-// }
-
-void intakeColorSort() {
-int opticalDistance = global::color.get_proximity();
-int activeColor = global::color.get_hue();
-  if (opticalDistance < 150) { // If we are detecting a ball 
-    if (teamBlue == true){ // And If we are blue
-      if (activeColor > 0 && activeColor < 50){ // We detect red
-        global::hood.extend();
-        global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
-      }
-
-   } else if (teamBlue == false) { // And If we are red
-      if (activeColor > 120 && activeColor < 250){ // We detect blue
-        global::hood.extend();
-        global::hoodRoller.move_velocity(-200); //Reversal; Balls shoot out top
-      }
-    }
-  }
-}
-
-void TESTColorSort() {
-int opticalDistance = global::color.get_proximity(); //og wasn't here
-int activeColor = global::color.get_hue();
-  if (opticalDistance > 150) { //  we are detecting a ball and scoring top
-    if (teamBlue == true){ // And If we are blue
-      if (activeColor > 0 && activeColor < 40){ // We detect red
-        global::testMotor1.move_velocity(-200); //Reversal; Balls shoot out mid
-      }
-
-   } else if (teamBlue == false) { // And If we are red
-      if (activeColor > 120 && activeColor < 250){ // We detect blue
-        global::testMotor1.move_velocity(-200); //Reversal; Balls shoot out mid
-      }
-    }
-  }
-}
-
-// void timer() {
-//     int currentTime = pros::millis();
-//     int duration = 500; //0.5 seconds
-//     if (currentTime - startTime >= duration){
-//       pros::lcd::set_text(7, std::to_string((currentTime)));
-//       startTime = currentTime;
-//     }
 // }
 
 
@@ -365,28 +264,74 @@ void opcontrol() {
   // chassis.odom_enable(false);
 
   // variable start
-  bool tongue = true; //Tongue is up
-  bool descore = false; //Descore is retracted
-  
-  bool y = false;
-
-
-  teamBlue = true;
 
   while (true) {
     ez_template_extras();
-    int activeColor = global::color.get_hue();
-    int opticalDistance = global::color.get_proximity();
+    int activeColorF = global::colorF.get_hue();
+    int opticalDistanceF = global::colorF.get_proximity();
+    int activeColorB = global::colorB.get_hue();
+    int opticalDistanceB = global::colorB.get_proximity();
     int currentTime = pros::millis();
     int scoreDuration = 150;
-    int midTime = 650;
+    int midTime = 300;
+    int colorTimeDuration = 200;
 
-    teamBlue = true;
+    global::colorB.set_integration_time(5);
+    global::colorB.set_led_pwm(20);
+    global::colorF.set_integration_time(5);
+    global::colorF.set_led_pwm(20);
+
+    if (teamBlue){ // We are BLUE
+      if (activeColorF > 0 && activeColorF < 25){ // We see RED, update colorTime
+        colorTime = pros::millis();
+      } else if (activeColorB > 0 && activeColorB < 25){
+        colorTime = pros::millis() - 130;
+      }
+    }
+
+    if (!teamBlue){ // We are RED
+      if (activeColorF > 75 && activeColorF < 250){ // We see BLUE, update colorTime
+        colorTime = pros::millis();
+      } else if (activeColorB > 75 && activeColorB < 250){
+        colorTime = pros::millis() - 130;
+      }
+    }
+
+    if (master.get_digital(DIGITAL_X) && (master.get_digital(DIGITAL_L1))){ // Disables/Enables Color Sorting
+      if (colorStatus == true){
+        colorStatus = false;
+       master.rumble(".--");
+      } else if (colorStatus == false){
+        colorStatus = true;
+        master.rumble(".");
+      }
+    }
+// /************************************************************************************************************************************************************************* */
+
+   chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade !!!USE THIS!!!!
+  //  chassis.opcontrol_tank();
+    
+  //   if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset scoretime
+  //   pros::lcd::set_text(3, std::to_string((scoreTime)));
+  //   scoreTime = pros::millis();
+  //  }
+  if (master.get_digital_new_press(DIGITAL_A)) { // B is pressed, reset scoretime
+     if (!teamBlue) {
+      teamBlue = true;
+     } else if (teamBlue){
+      teamBlue = false;
+     }
+   }
+
+
+
+/************************************************************************************************************************************************************************* */
+
 
     // pros::lcd::set_text (4, std::to_string(teamBlue));
-    // pros::lcd::set_text(5, std::to_string(colorStatus));
-    // pros::lcd::set_text(6, std::to_string(global::color.get_proximity()));
-    // pros::lcd::set_text(7, std::to_string(global::color.get_hue()));
+    // pros::lcd::set_text(5, std::to_string(colorTime));
+    // pros::lcd::set_text(7, std::to_string(global::colorF.get_proximity()));
+    // pros::lcd::set_text(6, std::to_string(global::colorF.get_hue()));
     pros::lcd::set_text(7, std::to_string(chassis.drive_imu_get()));
  
       // pros::lcd::set_text(2, std::to_string(scoreDuration));
@@ -396,84 +341,94 @@ void opcontrol() {
       // pros::lcd::set_text(6, std::to_string(y));
       // pros::lcd::set_text(7, std::to_string(pros::millis()));
 
-  // if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
-  //   pros::lcd::set_text(3, std::to_string((scoreTime)));
-  //   scoreTime = pros::millis();
-  //     if (!y) {
-  //       y = true;
-  //     } else if (y) {
-  //       y = false;
-  //     }
-  // }
-
-    bool top = master.get_digital(DIGITAL_B); // Value depends on if we scoring top
-    bool mid = master.get_digital(DIGITAL_Y); // Value depends on if we scoring mid
-
     if (!pros::competition::is_connected()){
-      if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R2)) {
-        SAWP();
+      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_L1)) {
+        turnCW90();
       }   
-      if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_R1)){
-        // turnCCW90();
-        leftMid();
+      if (master.get_digital(DIGITAL_A) && master.get_digital(DIGITAL_L2)){
+        turnCCW90();
+        // leftMid();
       }
-    //   if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_UP)){
-    //     driveFwd24();
-    //   }
-    //   if (master.get_digital(DIGITAL_B) && master.get_digital(DIGITAL_DOWN)){
-    //     driveBack24();
-    //   }
      }
     
-    // chassis.opcontrol_tank();  // Tank control
-    // chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade !!!USE THIS!!!!
-    // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
-    // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
-    // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
-
     
     /*********************************************************     CAM CONTROLS      ******************************************************************************************** */
-    chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade !!!USE THIS!!!!
-    
+    // if (master.get_digital(DIGITAL_DOWN)) { // L2 Toggle = Match Loader
+    //   global::descore.retract();
+    // } else if (!master.get_digital(DIGITAL_DOWN)) {
+    //   global::descore.extend();
+    // }
 
-    if (master.get_digital_new_press(DIGITAL_B)) { // B is pressed, reset score time
-    pros::lcd::set_text(3, std::to_string((scoreTime)));
-    scoreTime = pros::millis();
-      if (!y) {
-        y = true;
-      } else if (y) {
-        y = false;
-      }
-  }
-  
-    if (master.get_digital_new_press(DIGITAL_DOWN)){ //DOWN Toggle = Descore
-      global::descore.toggle();
-    }
+    // if (master.get_digital(DIGITAL_L2)) { // L2 Toggle = Match Loader
+    //   global::tongue.extend();
+    // } else if (!master.get_digital(DIGITAL_L2)) {
+    //   global::tongue.retract();
+    // }
 
-    if (master.get_digital(DIGITAL_L2)) { // L2 Toggle = Match Loader
-      global::tongue.extend();
-    } else if (!master.get_digital(DIGITAL_L2)) {
-      global::tongue.retract();
-    }
+    // if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
+    //   intake();
+      
+    //     // if (teamBlue == true && colorStatus == true){ // If we ARE blue,
+    //     //     if ((currentTime - colorTime) < colorTimeDuration){
+    //     //       global::intake.move_velocity(600);
+    //     //       global::topRoller.move_velocity(160);
+    //     //       global::hoodRoller.move_velocity(-160);
+    //     //     } else if ((currentTime - colorTime) >= colorTimeDuration){
+    //     //       intake(); //Intake as normal
+    //     //     }
+    //     // } else if (teamBlue == false /* && colorStatus == true */ ){ // If we ARE red,
+    //     //     if ((currentTime - colorTime) < colorTimeDuration){
+    //     //       global::intake.move_velocity(600);
+    //     //       global::topRoller.move_velocity(160);
+    //     //       global::hoodRoller.move_velocity(-160);
+    //     //     } else if ((currentTime - colorTime) >= colorTimeDuration){
+    //     //       intake(); // Top as normal
+    //     //     }
+    //     // } else {
+    //     //   intake();
+    //     // }
 
-    if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
-      intake();
-    } else if (master.get_digital(DIGITAL_R1)){// R1 Hold = Reverse Intake/Bottom Goal Score
-      outLow();
-    } else if (master.get_digital(DIGITAL_Y)){// Y Hold = Top Goal Score
-      outTop();
-    } else if (master.get_digital(DIGITAL_B)) {// B Hold = Middle Goal Score
-       if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
-        // global::topRoller.move_velocity(-200);
-        global::topRoller.move_velocity(-200);
-        global::hoodRoller.move_velocity(200);
-      } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
-        outMid();
-      }
-    } else { // Stop all motors if nothing pressed
-      stopAll();
-    }
+    // } else if (master.get_digital(DIGITAL_R1)){// R1 Hold = Reverse Intake/Bottom Goal Score
+    //   outLow();
+    // } else if (master.get_digital(DIGITAL_Y)){// Y Hold = Top Goal Score
 
+    //     if (teamBlue == true && colorStatus == true){ // If we ARE blue,
+    //         if ((currentTime - colorTime) < colorTimeDuration){
+    //           global::intake.move_velocity(600);
+    //           global::topRoller.move_velocity(140);
+    //           global::hoodRoller.move_velocity(-130);
+    //         } else if ((currentTime - colorTime) >= colorTimeDuration){
+    //           global::intake.move_velocity(600);
+    //           global::topRoller.move_velocity(175);   
+    //           global::hoodRoller.move_velocity(200);
+    //           global::hood.set_value(true);
+    //         }
+    //     } else if (teamBlue == false  && colorStatus == true  ){ // If we ARE red,
+    //         if ((currentTime - colorTime) < colorTimeDuration){
+    //           global::intake.move_velocity(600);
+    //           global::topRoller.move_velocity(140);
+    //           global::hoodRoller.move_velocity(-130);
+    //         } else if ((currentTime - colorTime) >= colorTimeDuration){
+    //           global::intake.move_velocity(600);
+    //           global::topRoller.move_velocity(175);   
+    //           global::hoodRoller.move_velocity(200);
+    //           global::hood.set_value(true);
+    //         }
+    //     } else {
+    //       outTop();
+    //     }
+
+    // } else if (master.get_digital(DIGITAL_B)) {// B Hold = Middle Goal Score
+    //    if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
+    //     // global::topRoller.move_velocity(-200);
+    //     global::topRoller.move_velocity(-200);
+    //     global::hoodRoller.move_velocity(200);
+    //   } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
+    //     outMid();
+    //   }
+    // } else { // Stop all motors if nothing pressed
+    //   stopAll();
+    // }
 
     /*******************************************************      JAYDEN CONTROLS       *************************************************************************************** */
 
@@ -522,6 +477,7 @@ void opcontrol() {
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
     } 
   }
+
 
 //run this before pros m
 //    pros m --project "c:\Users\jaych\Desktop\25-26 Code!\25-26-Code-main\Code"

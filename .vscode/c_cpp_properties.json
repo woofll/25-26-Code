@@ -4,8 +4,7 @@
       "name": "PROS Project",
       "includePath": [
         "${workspaceFolder}/**",
-        "C:\\Users\\jaych\\Desktop\\25-26 Code!\\25-26-Code-main\\Code",
-        "C:\\Users\\jaych\\Desktop\\25-26 Code!\\25-26-Code-main\\Code"
+        "c:\\Users\\jaych\\OneDrive\\Desktop\\Screwless Zen\\include"
       ],
       "defines": [
         "_DEBUG",
@@ -18,7 +17,7 @@
       "intelliSenseMode": "gcc-arm",
       "browse": {
         "path": [
-          "c:\\Users\\jaych\\Desktop\\25-26 Code!"
+          "c:\\Users\\jaych\\OneDrive\\Desktop\\Screwless Zen"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""

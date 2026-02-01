@@ -633,90 +633,90 @@ void rightMid(){
   chassis.pid_wait();
 }
 
-void SAWP() {
-  chassis.drive_angle_set(270);
+// void SAWP() {
+//   chassis.drive_angle_set(270);
 
-  //Phase 1 - Match Load and fill right goal
-  intake();
-  chassis.pid_drive_set(12, 90);
-  chassis.pid_wait_quick_chain();
-  global::tongue.toggle();
-  while (global::distance.get() > 800){
-    chassis.drive_set(-120, -120);
-  }
-  //chassis.pid_drive_set(-46, 115);
-  //chassis.pid_wait_quick();
-  chassis.pid_drive_set(-9, 70);
-  chassis.pid_wait_quick();
-  chassis.pid_turn_set(180, 70);
-  chassis.pid_wait_quick();
+//   //Phase 1 - Match Load and fill right goal
+//   intake();
+//   chassis.pid_drive_set(12, 90);
+//   chassis.pid_wait_quick_chain();
+//   global::tongue.toggle();
+//   while (global::distance.get() > 800){
+//     chassis.drive_set(-120, -120);
+//   }
+//   //chassis.pid_drive_set(-46, 115);
+//   //chassis.pid_wait_quick();
+//   chassis.pid_drive_set(-9, 70);
+//   chassis.pid_wait_quick();
+//   chassis.pid_turn_set(180, 70);
+//   chassis.pid_wait_quick();
 
-  chassis.pid_drive_set(8, 90);
-  chassis.pid_wait_quick_chain();
-  chassis.drive_set(50, 50);
-  pros::delay(525);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-5, 110, true);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-25, 100);
-  chassis.pid_wait_quick_chain();
-  global::tongue.toggle();
-  outTop();
-  pros::delay(1000);
-  stopAll();
+//   chassis.pid_drive_set(8, 90);
+//   chassis.pid_wait_quick_chain();
+//   chassis.drive_set(50, 50);
+//   pros::delay(525);
+//   chassis.pid_wait_quick_chain();
+//   chassis.pid_drive_set(-5, 110, true);
+//   chassis.pid_wait_quick_chain();
+//   chassis.pid_drive_set(-25, 100);
+//   chassis.pid_wait_quick_chain();
+//   global::tongue.toggle();
+//   outTop();
+//   pros::delay(1000);
+//   stopAll();
 
-  // //Phase 2 - Collect the 6 Center Corner Balls
-  chassis.pid_turn_set(277, 90);
-  chassis.pid_wait_quick();
-  global::tongue.toggle();
-  intake();
-  chassis.pid_drive_set(5, 110);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(19, 90);
-  chassis.pid_wait_quick_chain();
-  global::tongue.toggle();
+//   // //Phase 2 - Collect the 6 Center Corner Balls
+//   chassis.pid_turn_set(277, 90);
+//   chassis.pid_wait_quick();
+//   global::tongue.toggle();
+//   intake();
+//   chassis.pid_drive_set(5, 110);
+//   chassis.pid_wait_quick_chain();
+//   chassis.pid_drive_set(19, 90);
+//   chassis.pid_wait_quick_chain();
+//   global::tongue.toggle();
 
-  chassis.pid_turn_set(265, 90);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(30, 110);
-  chassis.pid_wait_quick_chain();
-  global::tongue.toggle();
-  chassis.pid_drive_set(10, 90);
-  chassis.pid_wait_quick();
+//   chassis.pid_turn_set(265, 90);
+//   chassis.pid_wait_quick_chain();
+//   chassis.pid_drive_set(30, 110);
+//   chassis.pid_wait_quick_chain();
+//   global::tongue.toggle();
+//   chassis.pid_drive_set(10, 90);
+//   chassis.pid_wait_quick();
 
-  chassis.pid_turn_set(225, 90);
-  chassis.pid_wait_quick();
-  chassis.pid_drive_set(-18, 80);
-  chassis.pid_wait_quick_chain();
-  outLow();
-  global::intake.brake();
-  pros::delay(120);
-  outMid();
-  pros::delay(900);
-  stopAll();
+//   chassis.pid_turn_set(225, 90);
+//   chassis.pid_wait_quick();
+//   chassis.pid_drive_set(-18, 80);
+//   chassis.pid_wait_quick_chain();
+//   outLow();
+//   global::intake.brake();
+//   pros::delay(120);
+//   outMid();
+//   pros::delay(900);
+//   stopAll();
 
-  // Phase 3 - go to match loader
+//   // Phase 3 - go to match loader
 
-  chassis.pid_drive_set(49, 120);
-  intake();
-  chassis.pid_wait_quick();
-  chassis.pid_turn_set(180, 90);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(9, 90);
-  chassis.pid_wait_quick_chain();
-  chassis.drive_set(50, 50);
-  pros::delay(500);
-  chassis.pid_wait_quick();
-  chassis.pid_drive_set(-4, 100, true);
-  chassis.pid_wait_quick_chain();
-  chassis.pid_drive_set(-24, 100);
-  chassis.pid_wait_quick_chain();
-  global::tongue.toggle();
-  outTop();
-  pros::delay(2000);
-  chassis.pid_wait();
+//   chassis.pid_drive_set(49, 120);
+//   intake();
+//   chassis.pid_wait_quick();
+//   chassis.pid_turn_set(180, 90);
+//   chassis.pid_wait_quick_chain();
+//   chassis.pid_drive_set(9, 90);
+//   chassis.pid_wait_quick_chain();
+//   chassis.drive_set(50, 50);
+//   pros::delay(500);
+//   chassis.pid_wait_quick();
+//   chassis.pid_drive_set(-4, 100, true);
+//   chassis.pid_wait_quick_chain();
+//   chassis.pid_drive_set(-24, 100);
+//   chassis.pid_wait_quick_chain();
+//   global::tongue.toggle();
+//   outTop();
+//   pros::delay(2000);
+//   chassis.pid_wait();
 
-}
+// }
 
 void quickSkills(){
  chassis.pid_drive_set(7_in, 110);
