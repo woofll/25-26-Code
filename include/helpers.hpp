@@ -10,12 +10,27 @@ void outMidSkillsSlow();
 void outLow();
 void stopAll();
 
-
-void posxdsr();
-void negxdsr();
-void posydsr();
-void negydsr();
-
 void turndsr();
 void staticdsr();
+
+/**************************** */
+void frposxposy();
+void frposxnegy();
+void frnegxposy();
+void frnegxnegy();
+
+void brposxposy();
+void brposxnegy();
+void brnegxposy();
+void brnegxnegy();
+
+void flposxposy();
+void flposxnegy();
+void flnegxposy();
+void flnegxnegy();
+
+void blposxposy();
+void blposxnegy();
+void blnegxposy();
+void blnegxnegy();
 

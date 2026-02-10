@@ -20,5 +20,6 @@ extern pros::Distance distanceR;
 extern pros::adi::Pneumatics tongue;
 extern pros::adi::Pneumatics descore;
 extern pros::adi::Pneumatics hood;
+extern pros::adi::Pneumatics intakeLift;
 
 }

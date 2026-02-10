@@ -11,15 +11,14 @@ pros::Motor hoodRoller(-9, pros::v5::MotorGearset::rpm_200); //-2
 pros::Optical colorF(1);
 pros::Optical colorB(4);
 
-pros::Distance distanceF(20);
-pros::Distance distanceB(3);
-pros::Distance distanceL(20);
-pros::Distance distanceR(20);
+pros::Distance distanceF(13);
+pros::Distance distanceB(3);//3
+pros::Distance distanceL(15);//15
+pros::Distance distanceR(17);//17
 
 pros::adi::Pneumatics tongue('B', false); //Starts retracted
 pros::adi::Pneumatics hood('C', false); //Starts retracted
-pros::adi::Pneumatics descore('A', true); //Starts retracted 
-
-
+pros::adi::Pneumatics descore('A', false); //Starts retracted 
+pros::adi::Pneumatics intakeLift('D', false);
 
 }

@@ -18,19 +18,22 @@ void driveBack24();
 void turnCW90();
 void turnCCW90();
 void swingTest();
+void exampledsr();
 
 void skills();
-void quickSkills();
 
 /*********************** AUTO PROGRAMS ******************************/
-void leftTop();
-void rightTop();
+void leftAntiSAWP();
+void rightAntiSAWP();
+void slightFwd();
 
 void leftMid();
 void rightMid();
 
 void SAWP();
 
-
 void leftTopDescore();
 void rightTopDescore();
+
+
+/*----------------------dsr-----------------------------------------*/
