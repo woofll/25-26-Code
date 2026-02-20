@@ -26,7 +26,7 @@ extern Drive chassis;
 void intake() {
         global::intake.move_velocity(600);
         global::topRoller.move_velocity(200);
-        global::hoodRoller.move_velocity(38);
+        global::hoodRoller.move_velocity(35);
         global::hood.set_value(false);  
         
 }
@@ -53,7 +53,6 @@ void outLow() {
     global::intake.move_velocity(-450);
     global::topRoller.move_velocity(-150);
     global::hoodRoller.move_velocity(-150);
-    global::intakeLift.extend();
 }
 
 void stopAll() {
@@ -74,6 +73,7 @@ void outMidSkillsSlow(){
     global::topRoller.move_velocity(50);
     global::hoodRoller.move_velocity(-50);
 }
+
 
 
 

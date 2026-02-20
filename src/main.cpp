@@ -17,8 +17,8 @@ ez::Drive chassis(
     450);   // Wheel RPM = cartridge * (motor gear / wheel gear) Actual rpm is 360
 
   // extern bool teamBlue = false;
-  bool colorStatus = true;
-  bool teamBlue = true;
+  bool colorStatus = false;
+  bool teamBlue = false;
 
   double startTime, scoreTime, colorTime, midTime = 0;
 
@@ -56,13 +56,15 @@ void initialize() {
   // Configure your chassis controls
   chassis.opcontrol_curve_buttons_toggle(false);   // Enables modifying the controller curve with buttons on the joysticks
   chassis.opcontrol_drive_activebrake_set(0.0);   // Sets the active brake kP. We recommend ~2.  0 will disable.
-  chassis.opcontrol_curve_default_set(2.0, 2.0);  // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
+  chassis.opcontrol_curve_default_set(2.5, 2.5);  // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)
 
 
   // Set the drive to your own constants from autons.cpp!
   default_constants();
-  if ((global::colorB.get_hue() > 75 && global::colorB.get_hue() < 250) || (global::colorF.get_hue() > 75 && global::colorF.get_hue()) < 250) { //Checks if blue, if so = true
+  if (global::colorF.get_hue() > 75 && global::colorF.get_hue() < 250) { //Checks if blue, if so = true
     teamBlue = true;
+  } else if (!(global::colorF.get_hue() > 75 && global::colorF.get_hue() < 250)){
+    teamBlue = false;
   }
 
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
@@ -72,12 +74,14 @@ void initialize() {
 
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
-      Auton{"winninigning SAWP", SAWP},
-      Auton{"LEFT Top Goal + Descore ONLY 7", leftTopDescore},
-      Auton{"RIGHT Top Goal + Descore ONLY 7", rightTopDescore},
+      Auton{"gofoward!", goforward},
       Auton{"LEFT MID 3 + 4", leftMid},
       Auton{"RIGHT MID 3 + 4", rightMid},
-      // Auton{"SOLO WINNERSSSS 14", SAWP},
+      Auton{"LEFT Top Goal + Descore ONLY 7", leftTopDescore},
+      Auton{"RIGHT Top Goal + Descore ONLY 7", rightTopDescore},
+      Auton{"winninigning SAWP", SAWP},
+      Auton{"LEFT antisawp", leftAntiSAWP},
+      Auton{"RIGHT antisawp", rightAntiSAWP},
       Auton{"Skills", skills},
 
   });
@@ -270,11 +274,11 @@ void opcontrol() {
     int opticalDistanceB = global::colorB.get_proximity();
 
     int currentTime = pros::millis();
-    int scoreDuration = 400;
+    int scoreDuration = 200;
     int midTime = 300;
     int lowTime = 200;
     int colorTimeDuration = 200;
-
+    // i am a monkey
     global::colorB.set_integration_time(5);
     global::colorB.set_led_pwm(20);
     global::colorF.set_integration_time(5);
@@ -283,8 +287,9 @@ void opcontrol() {
     // pros::lcd::set_text (4, std::to_string(teamBlue));
     // pros::lcd::set_text(5, std::to_string(colorTime));
     // pros::lcd::set_text(7, std::to_string(global::colorF.get_proximity()));
-    // pros::lcd::set_text(6, std::to_string(global::colorF.get_hue()));
-    // pros::lcd::set_text(7, std::to_string(chassis.drive_imu_get()));
+    // pros::lcd::set_text(5, std::to_string(global::colorB.get_hue()));
+    //   pros::lcd::set_text(6, std::to_string(global::colorF.get_hue()));
+    pros::lcd::set_text(7, std::to_string(chassis.drive_imu_get()));
  
       // pros::lcd::set_text(2, std::to_string(scoreDuration));
       // pros::lcd::set_text(3, std::to_string((scoreTime)));
@@ -333,15 +338,20 @@ void opcontrol() {
         // measure_offsets();
         // chassis.drive_sensor_reset();
         // SAWP();
+        // leftMid();
         //rightAntiSAWP();
         // leftTopDescore();
-        leftMid();
+        // rightTopDescore();
+        // skills();
+        // leftAntiSAWP();
+        // rightAntiSAWP();
+      // goforward();
       }   
     }
-      if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_A)){
-        driveFwd24();
-        // leftMid();
-      }
+      // if (master.get_digital(DIGITAL_L1) && master.get_digital(DIGITAL_A)){
+      //   // driveFwd24();
+      //   // leftMid();
+      // }
      
       
 /*********************************************************     CAM CONTROLS      ******************************************************************************************** */
@@ -376,7 +386,7 @@ void opcontrol() {
         //     } else if ((currentTime - colorTime) >= colorTimeDuration){
         //       intake(); //Intake as normal
         //     }
-        // } else if (teamBlue == false /* && colorStatus == true */ ){ // If we ARE red,
+        // } else if (teamBlue == false && colorStatus == true){ // If we ARE red,
         //     if ((currentTime - colorTime) < colorTimeDuration){
         //       global::intake.move_velocity(600);
         //       global::topRoller.move_velocity(160);
@@ -393,46 +403,55 @@ void opcontrol() {
         global::intake.move_velocity(-600);
         global::topRoller.move_velocity(-200);
         global::hoodRoller.brake();
+
+        // global::intakeLift.extend(); //
       } else if ((currentTime - scoreTime) >= lowTime) { // After lowTime since R1, outLow as normal
         outLow();
+
+        // global::intakeLift.extend(); //
       }
     } else if (master.get_digital(DIGITAL_Y)){// Y Hold = Top Goal Score
-      outTop();
-      global::hood.extend();
+      // outTop();
+      // global::hood.extend();
 
-        // if (teamBlue == true && colorStatus == true){ // If we ARE blue,
-        //     if ((currentTime - colorTime) < colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(140);
-        //       global::hoodRoller.move_velocity(-130);
-        //     } else if ((currentTime - colorTime) >= colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(175);   
-        //       global::hoodRoller.move_velocity(200);
-        //       global::hood.set_value(true);
-        //     }
-        // } else if (teamBlue == false  && colorStatus == true  ){ // If we ARE red,
-        //     if ((currentTime - colorTime) < colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(140);
-        //       global::hoodRoller.move_velocity(-130);
-        //     } else if ((currentTime - colorTime) >= colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(175);   
-        //       global::hoodRoller.move_velocity(200);
-        //       global::hood.set_value(true);
-        //     }
-        // } else {
-        //   outTop();
-        //   global::hood.extend();
-        // }
+        if (teamBlue == true && colorStatus == true){ // If we ARE blue,
+            if ((currentTime - colorTime) < colorTimeDuration){
+              global::intake.move_velocity(600);
+              global::topRoller.move_velocity(70);
+              global::hoodRoller.move_velocity(-110);
+            } else if ((currentTime - colorTime) >= colorTimeDuration){
+              global::intake.move_velocity(600);
+              global::topRoller.move_velocity(140);   
+              global::hoodRoller.move_velocity(170);
+              global::hood.set_value(true);
+            }
+        } else if (teamBlue == false  && colorStatus == true){ // If we ARE red,
+            if ((currentTime - colorTime) < colorTimeDuration){
+              global::intake.move_velocity(600);
+              global::topRoller.move_velocity(70);
+              global::hoodRoller.move_velocity(-110);
+            } else if ((currentTime - colorTime) >= colorTimeDuration){
+              global::intake.move_velocity(600);
+              global::topRoller.move_velocity(140);   
+              global::hoodRoller.move_velocity(170);
+              global::hood.set_value(true);
+            }
+        } else {
+          outTop();
+          global::hood.extend();
+        }
 
     } else if (master.get_digital(DIGITAL_B)) {// B Hold = Middle Goal Score
        if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) < scoreDuration){ 
         global::topRoller.move_velocity(-200);
-        global::hoodRoller.move_velocity(200);
+        global::hoodRoller.move_velocity(-100);
       } else if (master.get_digital(DIGITAL_B) && (currentTime - scoreTime) >= scoreDuration) {
-        outMid();
+        // outMid();
+
+        // global::intake.move_velocity(300);
+        // global::topRoller.move_velocity(60);
+        // global::hoodRoller.move_velocity(-40);
+        // global::hood.set_value(false);
       }
     } else { // Stop all motors if nothing pressed
       stopAll();
@@ -447,75 +466,81 @@ void opcontrol() {
   //   scoreTime = pros::millis();
   // }
 
-  //   if (master.get_digital_new_press(DIGITAL_L1)) { // L1 Toggle = Match Loader
-  //     global::descore.set_value(false);
+  //   if (master.get_digital(DIGITAL_L1)) { // L1 Toggle = Descore
+  //     global::descore.retract();
   //   } else if(!master.get_digital(DIGITAL_L1)) {
-  //     global::descore.set_value(true);
+  //     global::descore.extend();
   //   }
+
+  //   // if (master.get_digital_new_press(DIGITAL_L1)) { // L1 Toggle = Descore
+  //   //   global::descore.toggle();
+  //   // } 
+
   //   if (master.get_digital(DIGITAL_DOWN)) { // DOWN Toggle = Match Loader
   //     global::tongue.extend();
   //   } else if (!master.get_digital(DIGITAL_DOWN)) {
   //     global::tongue.retract();
   //   }
   //   if (master.get_digital(DIGITAL_R2)){ // R2 Hold = Intake In
-      // intake();
+  //     intake();
       
-        // if (teamBlue == true && colorStatus == true){ // If we ARE blue,
-        //     if ((currentTime - colorTime) < colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(160);
-        //       global::hoodRoller.move_velocity(-160);
-        //     } else if ((currentTime - colorTime) >= colorTimeDuration){
-        //       intake(); //Intake as normal
-        //     }
-        // } else if (teamBlue == false /* && colorStatus == true */ ){ // If we ARE red,
-        //     if ((currentTime - colorTime) < colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(160);
-        //       global::hoodRoller.move_velocity(-160);
-        //     } else if ((currentTime - colorTime) >= colorTimeDuration){
-        //       intake(); // Top as normal
-        //     }
-        // } else {
-        //   intake();
-        // }
+  //       // if (teamBlue == true && colorStatus == true){ // If we ARE blue,
+  //       //     if ((currentTime - colorTime) < colorTimeDuration){
+  //       //       global::intake.move_velocity(600);
+  //       //       global::topRoller.move_velocity(160);
+  //       //       global::hoodRoller.move_velocity(-160);
+  //       //     } else if ((currentTime - colorTime) >= colorTimeDuration){
+  //       //       intake(); //Intake as normal
+  //       //     }
+  //       // } else if (teamBlue == false /* && colorStatus == true */ ){ // If we ARE red,
+  //       //     if ((currentTime - colorTime) < colorTimeDuration){
+  //       //       global::intake.move_velocity(600);
+  //       //       global::topRoller.move_velocity(160);
+  //       //       global::hoodRoller.move_velocity(-160);
+  //       //     } else if ((currentTime - colorTime) >= colorTimeDuration){
+  //       //       intake(); // Top as normal
+  //       //     }
+  //       // } else {
+  //       //   intake();
+  //       // }
   //   } else if (master.get_digital(DIGITAL_L2)){// L2 Hold = Reverse Intake/Bottom Goal Score
-      //  if ((currentTime - scoreTime) < lowTime){ // Hood Roller doesn't spin for lowTime
-      //   global::intake.move_velocity(-600);
-      //   global::topRoller.move_velocity(-200);
-      //   global::hoodRoller.brake();
-      // } else if ((currentTime - scoreTime) >= lowTime) { // After lowTime since R1, outLow as normal
-      //   outLow();
-      // }
+  //      if ((currentTime - scoreTime) < lowTime){ // Hood Roller doesn't spin for lowTime
+  //       global::intake.move_velocity(-600);
+  //       global::topRoller.move_velocity(-200);
+  //       global::hoodRoller.brake();
+  //     } else if ((currentTime - scoreTime) >= lowTime) { // After lowTime since R1, outLow as normal
+  //       outLow();
+  //       global::intakeLift.extend();
+  //     }
   //   } else if (master.get_digital(DIGITAL_B)){// B Hold = Top Goal Score
-      // outTop();
-      // global::hood.extend();
+  //     outTop();
+  //     global::hood.extend();
 
-        // if (teamBlue == true && colorStatus == true){ // If we ARE blue,
-        //     if ((currentTime - colorTime) < colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(140);
-        //       global::hoodRoller.move_velocity(-130);
-        //     } else if ((currentTime - colorTime) >= colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(175);   
-        //       global::hoodRoller.move_velocity(200);
-        //       global::hood.set_value(true);
-        //     }
-        // } else if (teamBlue == false  && colorStatus == true  ){ // If we ARE red,
-        //     if ((currentTime - colorTime) < colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(140);
-        //       global::hoodRoller.move_velocity(-130);
-        //     } else if ((currentTime - colorTime) >= colorTimeDuration){
-        //       global::intake.move_velocity(600);
-        //       global::topRoller.move_velocity(175);   
-        //       global::hoodRoller.move_velocity(200);
-        //       global::hood.set_value(true);
-        //     }
-        // } else {
-        //   outTop();
-        // }
+  //       // if (teamBlue == true && colorStatus == true){ // If we ARE blue,
+  //       //     if ((currentTime - colorTime) < colorTimeDuration){
+  //       //       global::intake.move_velocity(600);
+  //       //       global::topRoller.move_velocity(140);
+  //       //       global::hoodRoller.move_velocity(-130);
+  //       //     } else if ((currentTime - colorTime) >= colorTimeDuration){
+  //       //       global::intake.move_velocity(600);
+  //       //       global::topRoller.move_velocity(175);   
+  //       //       global::hoodRoller.move_velocity(200);
+  //       //       global::hood.set_value(true);
+  //       //     }
+  //       // } else if (teamBlue == false  && colorStatus == true  ){ // If we ARE red,
+  //       //     if ((currentTime - colorTime) < colorTimeDuration){
+  //       //       global::intake.move_velocity(600);
+  //       //       global::topRoller.move_velocity(140);
+  //       //       global::hoodRoller.move_velocity(-130);
+  //       //     } else if ((currentTime - colorTime) >= colorTimeDuration){
+  //       //       global::intake.move_velocity(600);
+  //       //       global::topRoller.move_velocity(175);   
+  //       //       global::hoodRoller.move_velocity(200);
+  //       //       global::hood.set_value(true);
+  //       //     }
+  //       // } else {
+  //       //   outTop();
+  //       // }
   //   } else if (master.get_digital(DIGITAL_Y)) {// Y Hold = Middle Goal Score
   //      if (master.get_digital(DIGITAL_Y) && (currentTime - scoreTime) < scoreDuration){ 
   //       global::topRoller.move_velocity(-200);

@@ -19,6 +19,6 @@ pros::Distance distanceR(17);//17
 pros::adi::Pneumatics tongue('B', false); //Starts retracted
 pros::adi::Pneumatics hood('C', false); //Starts retracted
 pros::adi::Pneumatics descore('A', false); //Starts retracted 
-pros::adi::Pneumatics intakeLift('D', false);
+pros::adi::Pneumatics intakeLift('D', false);    
 
 }

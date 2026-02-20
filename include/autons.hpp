@@ -35,5 +35,6 @@ void SAWP();
 void leftTopDescore();
 void rightTopDescore();
 
+void goforward();
 
 /*----------------------dsr-----------------------------------------*/
