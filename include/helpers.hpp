@@ -34,4 +34,4 @@ void blposxnegy();
 void blnegxposy();
 void blnegxnegy();
 
-void dsensorsGet();
+void sensorsGet();

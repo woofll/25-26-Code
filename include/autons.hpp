@@ -31,6 +31,7 @@ void leftMid();
 void rightMid();
 
 void SAWP();
+void counterSAWP();
 
 void leftTopDescore();
 void rightTopDescore();
